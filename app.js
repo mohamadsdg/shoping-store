@@ -6,7 +6,12 @@ const path = require("path");
 const adminRoute = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 
+// this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
+
+// this middleware for serve static file (css|js|img ...)
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(shopRoute);
 // add filtering mecanism
 app.use("/admin", adminRoute);
