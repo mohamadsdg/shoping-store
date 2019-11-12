@@ -22,7 +22,8 @@ app.use("/admin", adminData.route);
 
 app.use((req, res, next) => {
   // res.status(404).send("<h1>Page not Found</h1>");
-  res.sendFile(path.join(__dirname, "views", "404.html"));
+  // res.sendFile(path.join(__dirname, "views", "404.html"));
+  res.render("404", { title: "Page Not Found" });
 });
 // const server = http.createServer(app);
 app.listen(9222);
