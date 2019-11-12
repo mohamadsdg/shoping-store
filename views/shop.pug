@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title #{title}
+        link(rel="stylesheet", href="/css/main.css")
+    body
+        header.main-header
+            nav.main-header__nav
+                ul.main-header__item-list
+                    li.main-header__item
+                        a.active(href="/") Shop
+                    li.main-header__item
+                        a(href="/admin/add-product") Add Product
+        main
+            h1 My Products
+            if data.length > 0 
+                .grid
+                    each product in data
+                        article.card product-item
+                            header.card__header
+                                h1.product__title #{product.title}
+                            .card__image
+                                img(src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX_NHAALuUHfyZxPXNj0RRwdMwthudkXWnfeWtUE13JnFkJWbq&s" alt="A Book")
+                            .card__content
+                                h2.product__price $19.99
+                                p.product__descriptionA very interesting book about so many even more interesting things!
+                            .card__actions
+                                button.btnAdd to Cart
+            else
+             p Empty Product...
