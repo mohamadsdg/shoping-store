@@ -2,6 +2,7 @@ const http = require("http");
 const express = require("express");
 const app = express();
 const path = require("path");
+const exphbs = require("express-handlebars");
 
 const adminData = require("./routes/admin");
 const shopRoute = require("./routes/shop");
@@ -12,8 +13,12 @@ app.use(express.urlencoded({ extended: true }));
 // this middleware for serve static file (css|js|img ...)
 app.use(express.static(path.join(__dirname, "public")));
 
+// add&config template engin
+app.engine("hbs", exphbs());
+app.set("view engine", "hbs");
+
 // add template engin
-app.set("view engine", "pug");
+// app.set("view engine", "pug");
 app.set("views", "views");
 
 app.use(shopRoute);
