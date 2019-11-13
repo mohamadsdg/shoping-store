@@ -14,8 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // add&config template engin
-app.engine("hbs", exphbs());
-app.set("view engine", "hbs");
+// app.engine("hbs", exphbs());
+// app.set("view engine", "hbs");
+
+// add template engin ejs
+app.set("view engine", "ejs");
 
 // add template engin
 // app.set("view engine", "pug");
@@ -31,4 +34,4 @@ app.use((req, res, next) => {
   res.render("404", { title: "Page Not Found" });
 });
 // const server = http.createServer(app);
-app.listen(9222);
+app.listen(9000);
