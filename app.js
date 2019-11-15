@@ -1,37 +1,23 @@
-const http = require("http");
 const express = require("express");
 const app = express();
 const path = require("path");
-const exphbs = require("express-handlebars");
 
-const adminData = require("./routes/admin");
+const errorController = require("./controller/error");
+const adminRouter = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
-
 // this middleware for serve static file (css|js|img ...)
 app.use(express.static(path.join(__dirname, "public")));
 
-// add&config template engin
-// app.engine("hbs", exphbs());
-// app.set("view engine", "hbs");
-
-// add template engin ejs
-app.set("view engine", "ejs");
-
-// add template engin
-// app.set("view engine", "pug");
+// add Themplate Engine
+app.set("view engine", "pug");
 app.set("views", "views");
 
+// add Routes
 app.use(shopRoute);
-// add filtering mecanism
-app.use("/admin", adminData.route);
+app.use("/admin", adminRouter);
+app.use(errorController.errorNotFound);
 
-app.use((req, res, next) => {
-  // res.status(404).send("<h1>Page not Found</h1>");
-  // res.sendFile(path.join(__dirname, "views", "404.html"));
-  res.render("404", { title: "Page Not Found" });
-});
-// const server = http.createServer(app);
 app.listen(9000);
