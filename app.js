@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
-const errorController = require("./controller/error");
+const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 
