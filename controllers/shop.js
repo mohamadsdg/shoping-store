@@ -1,4 +1,5 @@
 const Product = require("../models/products");
+const Cart = require("../models/cart");
 
 exports.getIndex = (req, res, next) => {
   Product.fetchAll(product => {
@@ -24,11 +25,31 @@ exports.getProducts = (req, res, next) => {
     });
   });
 };
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId;
+  Product.findByIndex(prodId, (err, product) => {
+    !err
+      ? res.render("shop/product-detail", {
+          product,
+          title: product.title,
+          path: "/products"
+        })
+      : res.status("404").send("<h1>Product not found</h1>");
+  });
+};
 exports.getCart = (req, res, next) => {
   res.render("shop/cart", {
     title: "Cart Page",
     path: "/cart"
   });
+};
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+
+  Product.findByIndex(prodId, (err, product) => {
+    !err && Cart.addProduct(prodId, product.price);
+  });
+  res.redirect("/");
 };
 exports.getCheckout = (req, res, next) => {
   res.render("shop/checkout", {

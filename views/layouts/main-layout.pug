@@ -12,13 +12,13 @@ html(lang="en")
             nav.main-header__nav
                 ul.main-header__item-list
                     li.main-header__item
-                        a(href="/",class= path ==='/'?'active':'') Shop
+                        a(href="/",class={active:path ==='/'}) Shop
                     li.main-header__item
-                        a(href="/products",class= path ==='/products'?'active':'') Products
+                        a(href="/products",class={active:path ==='/products'}) Products
                     li.main-header__item
-                        a(href="/cart",class= path ==='/cart'?'active':'') Cart
+                        a(href="/cart",class={active:path ==='/cart'}) Cart
                     li.main-header__item
-                        a(href="/orders",class= path ==='/orders'?'active':'') Orders
+                        a(href="/orders",class={active:path ==='/orders'}) Orders
                     li.main-header__item
                         a(href="/admin/add-product",class= path ==='admin/add-product'?'active':'') Add Product
                     li.main-header__item

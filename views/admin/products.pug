@@ -6,10 +6,10 @@ block style
 block content
     main
         h1 My Products
-        if data.length > 0 
+        if data.length > 0  
             .grid
                 each product in data
-                    article.card product-item
+                    article.card.product-item
                         header.card__header
                             h1.product__title #{product.title}
                         .card__image
