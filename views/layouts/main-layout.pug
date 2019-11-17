@@ -20,7 +20,7 @@ html(lang="en")
                     li.main-header__item
                         a(href="/orders",class={active:path ==='/orders'}) Orders
                     li.main-header__item
-                        a(href="/admin/add-product",class= path ==='admin/add-product'?'active':'') Add Product
+                        a(href="/admin/add-product?edit=false",class= path ==='admin/add-product'?'active':'') Add Product
                     li.main-header__item
                         a(href="/admin/products",class= path ==='admin/products'?'active':'') Admin Products
     block content

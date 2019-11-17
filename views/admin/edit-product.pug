@@ -1,1 +1,24 @@
 extends ../layouts/main-layout.pug 
+
+block style
+    link(rel="stylesheet", href="/css/forms.css")
+    link(rel="stylesheet", href="/css/product.css")
+
+block content
+    main
+        form.product-form(action= editMode ? "/admin/edit-product": "/admin/add-product" ,method="POST")
+            .form-control
+                label(for="title") Title
+                input(type="text", name="title",value= editMode && product.title)#title
+            .form-control
+                label(for="imageUrl") Image URL
+                input(type="text", name="imageUrl" ,value= editMode && product.imageUrl)#imageUrl
+            .form-control
+                label(for="price") price
+                input(type="text", name="price",step="0.01",value= editMode && product.price)#price
+            .form-control
+                label(for="description") description
+                textarea(name="description")#description #{editMode ? product.description :''}
+            if editMode
+                input(type="hidden" name="productId" value=product.id)
+            button(type="submit") #{editMode ? 'Update Product':'Add Product'}
