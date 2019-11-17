@@ -14,8 +14,8 @@ const getDataFromFile = cb => {
 };
 
 class Product {
-  constructor(title, imageUrl, price, description) {
-    this.id = Math.random().toString();
+  constructor(id, title, imageUrl, price, description) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
@@ -23,10 +23,20 @@ class Product {
   }
   save() {
     getDataFromFile(fileContent => {
-      fileContent.push(this);
-      fs.writeFile(outputPath, JSON.stringify(fileContent), err => {
-        console.log("method Save Product , callback writeFile", err);
-      });
+      if (this.id) {
+        const existProductIndex = fileContent.findIndex(x => x.id === this.id);
+        const updatedProducts = [...fileContent];
+        updatedProducts[existProductIndex] = this;
+        fs.writeFile(outputPath, JSON.stringify(updatedProducts), err => {
+          console.log("method Save Product , callback writeFile", err);
+        });
+      } else {
+        this.id = Math.random().toString();
+        fileContent.push(this);
+        fs.writeFile(outputPath, JSON.stringify(fileContent), err => {
+          console.log("method Save Product , callback writeFile", err);
+        });
+      }
     });
   }
 
