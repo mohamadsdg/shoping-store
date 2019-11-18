@@ -50,6 +50,14 @@ class Product {
       rsp ? cb(false, rsp) : cb(true, rsp);
     });
   }
+  static deleteByIndex(id) {
+    getDataFromFile(content => {
+      let updateProduct = content.filter(x => x.id !== id);
+      fs.writeFile(outputPath, JSON.stringify(updateProduct), err => {
+        console.log("method deleteByIndex Product , callback writeFile", err);
+      });
+    });
+  }
 }
 
 module.exports = Product;
