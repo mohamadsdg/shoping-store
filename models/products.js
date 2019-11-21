@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const Cart = require("./cart");
 
 const outputPath = path.join(
   path.dirname(process.mainModule.filename),
@@ -53,8 +54,10 @@ class Product {
   static deleteByIndex(id) {
     getDataFromFile(content => {
       let updateProduct = content.filter(x => x.id !== id);
+      let selectedProduct = content.find(x => x.id === id);
       fs.writeFile(outputPath, JSON.stringify(updateProduct), err => {
-        console.log("method deleteByIndex Product , callback writeFile", err);
+        // console.log("method deleteByIndex Product , callback writeFile", err);
+        !err && Cart.deleteProduct(id, selectedProduct.price);
       });
     });
   }

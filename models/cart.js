@@ -43,4 +43,21 @@ module.exports = class Cart {
       });
     });
   }
+  static deleteProduct(id, productPrice) {
+    getDataFromFile(fileContent => {
+      let updatedCart = { ...fileContent };
+      let product = fileContent.products.find(x => x.id === id);
+      let productQty = product.qty;
+      updatedCart.products = fileContent.products.filter(x => x.id !== id);
+      updatedCart.totalPrice =
+        updatedCart.totalPrice - productQty * productPrice;
+
+      fs.writeFile(outputPath, JSON.stringify(updatedCart), err => {
+        console.log(
+          "method deleteProduct from Model Cart , callback writeFile",
+          err
+        );
+      });
+    });
+  }
 };
