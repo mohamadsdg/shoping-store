@@ -60,4 +60,7 @@ module.exports = class Cart {
       });
     });
   }
+  static getProduct(cb) {
+    getDataFromFile(cb);
+  }
 };
