@@ -44,7 +44,6 @@ class Product {
   static fetchAll(cb) {
     getDataFromFile(cb);
   }
-
   static findByIndex(id, cb) {
     getDataFromFile(content => {
       let rsp = content.find(x => x.id === id);
