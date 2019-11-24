@@ -11,7 +11,7 @@ exports.getIndex = (req, res, next) => {
   // });
   Product.fetchAll()
     .then(([rows, fields]) => {
-      console.log(JSON.stringify(rows));
+      // console.log(JSON.stringify(rows));
       res.render("shop/index", {
         data: rows,
         title: "SHOP",
