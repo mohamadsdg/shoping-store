@@ -27,13 +27,22 @@ exports.getOrders = (req, res, next) => {
   });
 };
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(product => {
-    res.render("shop/product-list", {
-      data: product,
-      title: "Products List Page",
-      path: "/products"
-    });
-  });
+  // Product.fetchAll(product => {
+  //   res.render("shop/product-list", {
+  //     data: product,
+  //     title: "Products List Page",
+  //     path: "/products"
+  //   });
+  // });
+  Product.fetchAll()
+    .then(([rows, fields]) => {
+      res.render("shop/index", {
+        data: rows,
+        title: "Products List Page",
+        path: "/products"
+      });
+    })
+    .catch(err => console.log(err));
 };
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
