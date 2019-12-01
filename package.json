@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:pure": "nodemon node purenode/app.js",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "init": "node_modules/.bin/sequelize init"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "express-handlebars": "^3.1.0",
     "mysql2": "^2.0.1",
     "pug": "^2.0.4",
-    "sequelize": "^4.44.3"
+    "sequelize": "^4.44.3",
+    "sequelize-cli": "^5.5.1"
   }
 }

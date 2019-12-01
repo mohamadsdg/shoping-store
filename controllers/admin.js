@@ -9,15 +9,26 @@ exports.getAddProduct = (req, res, next) => {
 };
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(null, title, imageUrl, price, description);
-  product
-    .save()
-    .then(() => {
+  // ## use Sequelize
+  Product.create({ title, imageUrl, price, description })
+    .then(result => {
       res.redirect("/");
+      console.log("ADD PRODUCT SUCCESSFULL");
     })
     .catch(err => {
       console.log(err);
     });
+
+  // ## custom method and use pure mysql2
+  // const product = new Product(null, title, imageUrl, price, description);
+  // product
+  //   .save()
+  //   .then(() => {
+  //     res.redirect("/");
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 };
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
@@ -63,10 +74,11 @@ exports.postDeleteProduct = (req, res, next) => {
     });
 };
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
-    .then(([row]) => {
+  // ## use Sequelize
+  Product.findAll()
+    .then(product => {
       res.render("admin/products", {
-        data: row,
+        data: product,
         title: "Products List Page In Admin",
         path: "admin/products"
       });
@@ -74,4 +86,17 @@ exports.getProducts = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
+
+  // ## custom method and use pure mysql2
+  // Product.fetchAll()
+  //   .then(([row]) => {
+  //     res.render("admin/products", {
+  //       data: row,
+  //       title: "Products List Page In Admin",
+  //       path: "admin/products"
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 };
