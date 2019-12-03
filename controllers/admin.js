@@ -36,32 +36,100 @@ exports.getEditProduct = (req, res, next) => {
 
   !editMode && res.redirect("/");
 
-  Product.findByIndex(prodId)
-    .then(([product]) => {
+  // ## use Sequelize
+  Product.findById(prodId)
+    .then(product => {
       res.render("admin/edit-product", {
         title: "Edit Product",
         path: "admin/edit-product",
         editMode: editMode,
-        product: product[0]
+        product: product
       });
     })
     .catch(err => {
-      console.log("getEditProduct", err);
+      console.log(err);
       res.status("404").send("<h1>Product not found</h1>");
     });
+
+  // ## custom method and use pure mysql2
+  // Product.findByIndex(prodId)
+  //   .then(([product]) => {
+  //     res.render("admin/edit-product", {
+  //       title: "Edit Product",
+  //       path: "admin/edit-product",
+  //       editMode: editMode,
+  //       product: product[0]
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log("getEditProduct", err);
+  //     res.status("404").send("<h1>Product not found</h1>");
+  //   });
 };
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
   let id = productId;
-  const product = new Product(null, title, imageUrl, price, description);
-  product
-    .editByIndex(id)
-    .then(() => {
+
+  // ## use Sequelize
+  // #  way 1
+  // Product.findById(id)
+  //   .then(product => {
+  //     product.title = title;
+  //     product.imageUrl = imageUrl;
+  //     product.price = price;
+  //     product.description = description;
+  //     return product.save();
+  //   })
+  //   .then(result => {
+  //     console.log("UPDATED PRODUCT!");
+  //     res.redirect("/admin/products");
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
+
+  // #  way 2
+  const Op = require("sequelize").Op;
+  Product.update(
+    {
+      title,
+      imageUrl,
+      price,
+      description
+    },
+    {
+      where: {
+        // id: id
+        id: {
+          [Op.eq]: id
+        }
+      }
+    }
+  )
+    .then(result => {
+      console.log("UPDATED PRODUCT!");
       res.redirect("/admin/products");
     })
-    .catch(err => {
-      console.log("postEditProduct", err);
-    });
+    .catch(err => {});
+
+  // Product.findById(id)
+  //   .then(product => {
+
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
+
+  // ## custom method and use pure mysql2
+  // const product = new Product(null, title, imageUrl, price, description);
+  // product
+  //   .editByIndex(id)
+  //   .then(() => {
+  //     res.redirect("/admin/products");
+  //   })
+  //   .catch(err => {
+  //     console.log("postEditProduct", err);
+  //   });
 };
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
