@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const sequelize = require("./util/database");
+const Product = require("./models/products");
+const User = require("./models/user");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -21,10 +23,23 @@ app.use(shopRoute);
 app.use("/admin", adminRouter);
 app.use(errorController.errorNotFound);
 
+// add associations
+Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+User.hasMany(Product);
+
 sequelize
   .sync()
   .then(result => {
-    // console.log(result);
+    return User.findById(1);
+  })
+  .then(user => {
+    if (!user) {
+      User.create({ name: "Mamrez", email: "sdg@test.com" });
+    }
+    return user;
+  })
+  .then(user => {
+    // console.log(user);
     app.listen(9000);
   })
   .catch(err => {
