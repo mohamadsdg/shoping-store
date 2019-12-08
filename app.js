@@ -63,7 +63,13 @@ sequelize
   })
   .then(user => {
     // becuse need for mock Cart for user
-    return user.createCart();
+    Cart.findAndCount()
+      .then(result => {
+        return result.count === 0 && user.createCart();
+      })
+      .catch(err => {
+        console.log(err);
+      });
   })
   .then(cart => {
     // console.log(user);

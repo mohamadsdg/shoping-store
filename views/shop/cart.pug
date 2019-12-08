@@ -1,15 +1,19 @@
 extends ../layouts/main-layout.pug 
 
+block style
+    link(rel="stylesheet", href="/css/cart.css")
+
 block content
     main
         h1 My Carts
         if data.length > 0
-            ul
-                each p in data
-                    li  
-                        p(style={'display':'inline-block','margin-right': '20px'}) #{p.product.title} (#{p.qty})
+            ul.cart__item-list
+                each product in data
+                    li.cart__item
+                        h1 #{product.title}
+                        h2 Quantity : #{product.cartItem.quantity}
                         form(action="/cart-delete-item" method='POST')
-                            input(type="hidden" name="productId" value=p.product.id )
-                            button( class="btn" type="submit") Delete
+                            input(type="hidden" name="productId" value=product.id )
+                            button( class="btn danger" type="submit") Delete
         else
             p No Product In Cart ...
