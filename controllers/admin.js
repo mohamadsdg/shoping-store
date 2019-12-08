@@ -45,15 +45,18 @@ exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
 
   !editMode && res.redirect("/");
+  // ## use Sequelize with associate (when user can edit the product that loggin already)
+  req.user
+    .getProducts({ where: { id: prodId } })
 
-  // ## use Sequelize
-  Product.findById(prodId)
+    // ## use Sequelize
+    // Product.findById(prodId)
     .then(product => {
       res.render("admin/edit-product", {
         title: "Edit Product",
         path: "admin/edit-product",
         editMode: editMode,
-        product: product
+        product: product[0]
       });
     })
     .catch(err => {
@@ -181,8 +184,11 @@ exports.postDeleteProduct = (req, res, next) => {
   //   });
 };
 exports.getProducts = (req, res, next) => {
-  // ## use Sequelize
-  Product.findAll()
+  // ## use Sequelize with associate (get products that user owner)
+  req.user
+    .getProducts()
+    // ## use Sequelize
+    // Product.findAll()
     .then(product => {
       res.render("admin/products", {
         data: product,
