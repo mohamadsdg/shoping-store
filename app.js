@@ -4,6 +4,8 @@ const path = require("path");
 const sequelize = require("./util/database");
 const Product = require("./models/products");
 const User = require("./models/user");
+const Cart = require("./models/cart");
+const CartItem = require("./models/cartItem");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -41,7 +43,14 @@ app.use(errorController.errorNotFound);
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product);
 
+Cart.belongsTo(User);
+User.hasOne(Cart);
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
 sequelize
+  // .sync({force:true})
   .sync()
   .then(result => {
     return User.findById(1);
@@ -53,6 +62,10 @@ sequelize
     return user;
   })
   .then(user => {
+    // becuse need for mock Cart for user
+    return user.createCart();
+  })
+  .then(cart => {
     // console.log(user);
     app.listen(9000);
   })
