@@ -9,8 +9,9 @@ exports.getAddProduct = (req, res, next) => {
 };
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  // ## use Sequelize
-  Product.create({ title, imageUrl, price, description })
+  // ## use Sequelize with associate
+  req.user
+    .createProduct({ title, imageUrl, price, description })
     .then(result => {
       res.redirect("/");
       console.log("ADD PRODUCT SUCCESSFULL");
@@ -18,6 +19,15 @@ exports.postAddProduct = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
+  // ## use Sequelize
+  // Product.create({ title, imageUrl, price, description })
+  //   .then(result => {
+  //     res.redirect("/");
+  //     console.log("ADD PRODUCT SUCCESSFULL");
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 
   // ## custom method and use pure mysql2
   // const product = new Product(null, title, imageUrl, price, description);

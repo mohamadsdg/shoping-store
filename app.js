@@ -9,6 +9,20 @@ const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 
+// store sequelize object to the request !!!!
+app.use((req, res, next) => {
+  User.findById(1)
+    .then(user => {
+      if (user) {
+        req.user = user;
+        next();
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
 // this middleware for serve static file (css|js|img ...)
