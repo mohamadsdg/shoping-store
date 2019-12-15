@@ -1,6 +1,7 @@
 const Product = require("../models/products");
 const Cart = require("../models/cart");
 const cartItem = require("../models/cartItem");
+const Order = require("../models/order");
 
 exports.getIndex = (req, res, next) => {
   // ## use Sequelize
@@ -27,11 +28,41 @@ exports.getIndex = (req, res, next) => {
   //   .catch(err => console.log(err));
 };
 exports.getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    title: "Order Page",
-    path: "/orders"
-  });
+  req.user
+    .getOrders()
+    .then(order => {
+      res.render("shop/orders", {
+        title: "Order Page",
+        path: "/orders",
+        data: order
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
+exports.postOrders = (req, res, next) => {
+  req.user
+    .getCart()
+    .then(cart => {
+      return cart.getProducts();
+    })
+    .then(product => {
+      console.log("product =====>>>>>>>>>", product);
+      req.user
+        .createOrder()
+        .then(order => {
+          // console.log("order =====>>>>>>>>>", order);
+          order.addProduct(product, {}, order);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      console.log("product =====>>>>>>>>>", product);
+    })
+    .catch(err => {});
+};
+
 exports.getProducts = (req, res, next) => {
   // ## use Sequelize
   Product.findAll()

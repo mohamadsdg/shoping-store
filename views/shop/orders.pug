@@ -2,4 +2,8 @@ extends ../layouts/main-layout.pug
 
 block content
     main
-        h1 Nothing there!
+        h1 My Orders
+        if data.length > 0
+            p has Order
+        else
+            p Nothing there ...!
