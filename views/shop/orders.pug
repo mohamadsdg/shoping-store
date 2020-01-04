@@ -4,6 +4,13 @@ block content
     main
         h1 My Orders
         if data.length > 0
-            p has Order
-        else
+            ul
+                each order in data 
+                    li 
+                        h1 # #{order.id}
+                        ul
+                            each product in order.products
+                                li #{product.title} (#{product.orderItem.quantity})
+                            
+        else    
             p Nothing there ...!
