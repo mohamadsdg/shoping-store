@@ -9,36 +9,15 @@ exports.getAddProduct = (req, res, next) => {
 };
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  // ## use Sequelize with associate
-  req.user
-    .createProduct({ title, imageUrl, price, description })
-    .then(result => {
-      res.redirect("/");
-      console.log("ADD PRODUCT SUCCESSFULL");
+  const product = new Product(title, imageUrl, price, description);
+  product
+    .save()
+    .then(resualt => {
+      res.redirect("/admin/add-product");
     })
     .catch(err => {
-      console.log(err);
+      console.log("postAddProduct:catch", resualt);
     });
-  // ## use Sequelize
-  // Product.create({ title, imageUrl, price, description })
-  //   .then(result => {
-  //     res.redirect("/");
-  //     console.log("ADD PRODUCT SUCCESSFULL");
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-
-  // ## custom method and use pure mysql2
-  // const product = new Product(null, title, imageUrl, price, description);
-  // product
-  //   .save()
-  //   .then(() => {
-  //     res.redirect("/");
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
 };
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;

@@ -1,7 +1,7 @@
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 
-const _db ;
+let _db = undefined;
 
 const mongoConnect = callback => {
   MongoClient.connect(
@@ -9,19 +9,19 @@ const mongoConnect = callback => {
   )
     .then(resualt => {
       console.log("Connected...!");
-      _db = resualt.db()
+      _db = resualt.db();
       callback();
     })
     .catch(err => {
       console.log(err);
-      throw err
+      throw err;
     });
 };
-const getDb = ()=>{
-  if(_db){
-    return _db
+const getDb = () => {
+  if (_db) {
+    return _db;
   }
-  throw 'no DataBase found !'
-}
-module.mongoConnect = mongoConnect;
-module.getDb = getDb;
+  throw "no DataBase found !";
+};
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;

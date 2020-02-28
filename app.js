@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 
 const errorController = require("./controllers/error");
-// const adminRouter = require("./routes/admin");
+const adminRouter = require("./routes/admin");
 // const shopRoute = require("./routes/shop");
 const mongoConnect = require("./util/database").mongoConnect;
 
@@ -18,7 +18,7 @@ app.set("views", "views");
 
 // add Routes
 // app.use(shopRoute);
-// app.use("/admin", adminRouter);
+app.use("/admin", adminRouter);
 app.use(errorController.errorNotFound);
 
 mongoConnect(() => {
