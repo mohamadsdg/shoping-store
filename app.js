@@ -5,7 +5,7 @@ const path = require("path");
 const errorController = require("./controllers/error");
 // const adminRouter = require("./routes/admin");
 // const shopRoute = require("./routes/shop");
-const mongoConnect = require("./util/database");
+const mongoConnect = require("./util/database").mongoConnect;
 
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
@@ -21,7 +21,6 @@ app.set("views", "views");
 // app.use("/admin", adminRouter);
 app.use(errorController.errorNotFound);
 
-mongoConnect(client => {
+mongoConnect(() => {
   app.listen(9000);
-  console.log("mongoConnect ========> ", client);
 });
