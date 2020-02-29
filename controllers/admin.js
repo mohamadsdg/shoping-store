@@ -24,104 +24,33 @@ exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
 
   !editMode && res.redirect("/");
-  // ## use Sequelize with associate (when user can edit the product that loggin already)
-  req.user
-    .getProducts({ where: { id: prodId } })
-
-    // ## use Sequelize
-    // Product.findById(prodId)
+  Product.findById(prodId)
     .then(product => {
       res.render("admin/edit-product", {
         title: "Edit Product",
         path: "admin/edit-product",
         editMode: editMode,
-        product: product[0]
+        product: product
       });
     })
     .catch(err => {
       console.log(err);
       res.status("404").send("<h1>Product not found</h1>");
     });
-
-  // ## custom method and use pure mysql2
-  // Product.findByIndex(prodId)
-  //   .then(([product]) => {
-  //     res.render("admin/edit-product", {
-  //       title: "Edit Product",
-  //       path: "admin/edit-product",
-  //       editMode: editMode,
-  //       product: product[0]
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log("getEditProduct", err);
-  //     res.status("404").send("<h1>Product not found</h1>");
-  //   });
 };
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
-  let id = productId;
+  const product = new Product(title, imageUrl, price, description, productId);
 
-  // ## use Sequelize
-  // #  way 1
-  // Product.findById(id)
-  //   .then(product => {
-  //     product.title = title;
-  //     product.imageUrl = imageUrl;
-  //     product.price = price;
-  //     product.description = description;
-  //     return product.save();
-  //   })
-  //   .then(result => {
-  //     console.log("UPDATED PRODUCT!");
-  //     res.redirect("/admin/products");
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-
-  // #  way 2
-  const Op = require("sequelize").Op;
-  Product.update(
-    {
-      title,
-      imageUrl,
-      price,
-      description
-    },
-    {
-      where: {
-        // id: id
-        id: {
-          [Op.eq]: id
-        }
-      }
-    }
-  )
+  product
+    .save()
     .then(result => {
       console.log("UPDATED PRODUCT!");
       res.redirect("/admin/products");
     })
-    .catch(err => {});
-
-  // Product.findById(id)
-  //   .then(product => {
-
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-
-  // ## custom method and use pure mysql2
-  // const product = new Product(null, title, imageUrl, price, description);
-  // product
-  //   .editByIndex(id)
-  //   .then(() => {
-  //     res.redirect("/admin/products");
-  //   })
-  //   .catch(err => {
-  //     console.log("postEditProduct", err);
-  //   });
+    .catch(err => {
+      console.log(err);
+    });
 };
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
@@ -163,11 +92,7 @@ exports.postDeleteProduct = (req, res, next) => {
   //   });
 };
 exports.getProducts = (req, res, next) => {
-  // ## use Sequelize with associate (get products that user owner)
-  req.user
-    .getProducts()
-    // ## use Sequelize
-    // Product.findAll()
+  Product.findAll()
     .then(product => {
       res.render("admin/products", {
         data: product,
@@ -178,17 +103,4 @@ exports.getProducts = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
-
-  // ## custom method and use pure mysql2
-  // Product.fetchAll()
-  //   .then(([row]) => {
-  //     res.render("admin/products", {
-  //       data: row,
-  //       title: "Products List Page In Admin",
-  //       path: "admin/products"
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
 };
