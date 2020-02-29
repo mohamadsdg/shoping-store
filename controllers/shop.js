@@ -64,7 +64,6 @@ exports.postOrders = (req, res, next) => {
     .catch(err => {});
 };
 exports.getProducts = (req, res, next) => {
-  // ## use Sequelize
   Product.findAll()
     .then(product => {
       res.render("shop/index", {
@@ -76,31 +75,14 @@ exports.getProducts = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
-
-  // ## custom method and use pure mysql2
-  // Product.fetchAll()
-  //   .then(([rows, fields]) => {
-  //     res.render("shop/index", {
-  //       data: rows,
-  //       title: "Products List Page",
-  //       path: "/products"
-  //     });
-  //   })
-  //   .catch(err => console.log(err));
 };
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  // Product.findById(prodId)
-  // ## use Sequelize
-  // Product.findAll({
-  //   where: {
-  //     id: prodId
-  //   }
-  // })
+
   Product.findById(prodId)
     .then(product => {
       res.render("shop/product-detail", {
-        product: product, //product[0]
+        product: product, //product[0] when using toArray()
         title: product.title, //product[0].title
         path: "/products"
       });
@@ -109,20 +91,6 @@ exports.getProduct = (req, res, next) => {
       console.log("getProduct", err);
       res.status("404").send("<h1>Product not found</h1>");
     });
-
-  // ## custom method and use pure mysql2
-  // Product.findByIndex(prodId)
-  //   .then(([product]) => {
-  //     res.render("shop/product-detail", {
-  //       product: product[0],
-  //       title: product[0].title,
-  //       path: "/products"
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log("getProduct", err);
-  //     res.status("404").send("<h1>Product not found</h1>");
-  //   });
 };
 exports.getCart = (req, res, next) => {
   req.user

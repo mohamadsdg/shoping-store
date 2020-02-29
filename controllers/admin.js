@@ -13,7 +13,7 @@ exports.postAddProduct = (req, res, next) => {
   product
     .save()
     .then(resualt => {
-      res.redirect("/admin/add-product");
+      res.redirect("/");
     })
     .catch(err => {
       console.log("postAddProduct:catch", resualt);
