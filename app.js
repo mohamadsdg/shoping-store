@@ -4,7 +4,7 @@ const path = require("path");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
-// const shopRoute = require("./routes/shop");
+const shopRoute = require("./routes/shop");
 const mongoConnect = require("./util/database").mongoConnect;
 
 // this middleware for pars body req
@@ -17,7 +17,7 @@ app.set("view engine", "pug");
 app.set("views", "views");
 
 // add Routes
-// app.use(shopRoute);
+app.use(shopRoute);
 app.use("/admin", adminRouter);
 app.use(errorController.errorNotFound);
 

@@ -1,10 +1,9 @@
 const Product = require("../models/products");
-const Cart = require("../models/cart");
-const cartItem = require("../models/cartItem");
-const Order = require("../models/order");
+// const Cart = require("../models/cart");
+// const cartItem = require("../models/cartItem");
+// const Order = require("../models/order");
 
 exports.getIndex = (req, res, next) => {
-  // ## use Sequelize
   Product.findAll()
     .then(product => {
       res.render("shop/index", {
@@ -16,16 +15,6 @@ exports.getIndex = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
-  // ## custom method and use pure mysql2
-  // Product.fetchAll()
-  //   .then(([rows, fields]) => {
-  //     res.render("shop/index", {
-  //       data: rows,
-  //       title: "SHOP",
-  //       path: "/"
-  //     });
-  //   })
-  //   .catch(err => console.log(err));
 };
 exports.getOrders = (req, res, next) => {
   req.user
