@@ -7,7 +7,7 @@ class Product {
     this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
-    this._id = new mongodb.ObjectId(id);
+    this._id = id ? new mongodb.ObjectId(id) : null;
   }
   save() {
     const db = getDb();
@@ -22,7 +22,9 @@ class Product {
       dbOp = db.collection("products").insertOne(this);
     }
     return dbOp
-      .then(resualt => {})
+      .then(resualt => {
+        return resualt;
+      })
       .catch(error => {
         console.log("catch", error);
         throw error;
@@ -52,6 +54,19 @@ class Product {
       .then(resualt => {
         // console.log(resualt);
         return resualt;
+      })
+      .catch(error => {
+        console.log("catch", error);
+        throw error;
+      });
+  }
+  static destroy(id) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .deleteOne({ _id: new mongodb.ObjectId(id) })
+      .then(resualt => {
+        console.log("destroy", resualt);
       })
       .catch(error => {
         console.log("catch", error);

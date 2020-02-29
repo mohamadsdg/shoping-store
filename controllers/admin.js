@@ -55,41 +55,12 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
 
-  // ## use Sequelize
-  // #way1
-  // Product.destroy({
-  //   where: {
-  //     id: productId
-  //   }
-  // })
-  //   .then(result => {
-  //     res.redirect("/admin/products");
-  //     console.log("DELETE PRODUCT!");
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-
-  // # way2
-  Product.findById(productId)
-    .then(product => {
-      return product.destroy();
-    })
-    .then(result => {
+  Product.destroy(productId)
+    .then(() => {
       console.log("DESTROYED PRODUCT");
       res.redirect("/admin/products");
     })
     .catch(err => console.log(err));
-
-  // ## custom method and use pure mysql2
-  // Product.deleteByIndex(productId)
-  //   .then(() => {
-  //     console.log("DELETE PRODUCT!");
-  //     res.redirect("/");
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
 };
 exports.getProducts = (req, res, next) => {
   Product.findAll()
