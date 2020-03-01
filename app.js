@@ -22,12 +22,12 @@ app.use((req, res, next) => {
     .findById("5e5c164d0bcdee56ec89e7b9")
     .then(usr => {
       req.user = usr;
+      next();
     })
     .catch(err => {
       console.log(err);
       throw err;
     });
-  next();
 });
 
 // add Routes
