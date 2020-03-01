@@ -6,6 +6,7 @@ const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 const mongoConnect = require("./util/database").mongoConnect;
+const user = require("./models/user");
 
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
@@ -15,6 +16,19 @@ app.use(express.static(path.join(__dirname, "public")));
 // add Themplate Engine
 app.set("view engine", "pug");
 app.set("views", "views");
+
+app.use((req, res, next) => {
+  user
+    .findById("5e5c164d0bcdee56ec89e7b9")
+    .then(usr => {
+      req.user = usr;
+    })
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+  next();
+});
 
 // add Routes
 app.use(shopRoute);
