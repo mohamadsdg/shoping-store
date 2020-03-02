@@ -1,5 +1,4 @@
 const Product = require("../models/products");
-const User = require("../models/user");
 // const Order = require("../models/order");
 
 exports.getIndex = (req, res, next) => {
@@ -17,9 +16,9 @@ exports.getIndex = (req, res, next) => {
 };
 exports.getOrders = (req, res, next) => {
   req.user
-    .getOrders({ include: ["products"] })
+    .getOrders()
     .then(order => {
-      console.log(order);
+      console.log("order", order);
       res.render("shop/orders", {
         title: "Order Page",
         path: "/orders",
@@ -31,33 +30,9 @@ exports.getOrders = (req, res, next) => {
     });
 };
 exports.postOrders = (req, res, next) => {
-  let _cart;
   req.user
-    .getCart()
-    .then(cart => {
-      _cart = cart;
-      return cart.getProducts();
-    })
-    .then(products => {
-      return req.user
-        .createOrder()
-        .then(order => {
-          return order.addProducts(
-            products.map(product => {
-              product.orderItem = { quantity: product.cartItem.quantity };
-              return product;
-            })
-          );
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    })
-    .then(resualt => {
-      // drop all product from cart after set to order
-      return _cart.setProducts(null);
-    })
-    .then(resualt => {
+    .addOrder()
+    .then(() => {
       res.redirect("/orders");
     })
     .catch(err => {});
