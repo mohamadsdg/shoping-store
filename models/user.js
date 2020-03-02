@@ -52,6 +52,25 @@ class User {
         { $set: { cart: updatedCart } }
       );
   }
+  removeFromCart(product) {
+    let updatedCartItems = this.cart.items.filter(
+      ci => ci.product_id.toString() !== product.toString()
+    );
+    const db = getDb();
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: { items: updatedCartItems } } }
+      )
+      .then(result => {
+        console.log("removeFromCart", result);
+      })
+      .catch(err => {
+        console.log(err);
+        throw err;
+      });
+  }
   getCart() {
     const db = getDb();
     let inRangeCart = this.cart.items.map(i => i.product_id);
