@@ -52,7 +52,31 @@ class User {
         { $set: { cart: updatedCart } }
       );
   }
+  getCart() {
+    const db = getDb();
+    let inRangeCart = this.cart.items.map(i => i.product_id);
 
+    // get product from collaction Products
+    // then mapData to nedded themplate
+    return db
+      .collection("products")
+      .find({ _id: { $in: inRangeCart } })
+      .toArray()
+      .then(products => {
+        return products.map(p => {
+          return {
+            ...p,
+            quantity: this.cart.items.find(
+              x => x.product_id.toString() === p._id.toString()
+            ).qty
+          };
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        throw err;
+      });
+  }
   static findById(id) {
     const db = getDb();
     return db

@@ -94,19 +94,12 @@ exports.getProduct = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user
     .getCart()
-    .then(cart => {
-      return cart
-        .getProducts()
-        .then(product => {
-          res.render("shop/cart", {
-            title: "Cart Page",
-            path: "/cart",
-            data: product
-          });
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    .then(product => {
+      res.render("shop/cart", {
+        title: "Cart Page",
+        path: "/cart",
+        data: product
+      });
     })
     .catch(err => {
       console.log(err);
@@ -119,7 +112,7 @@ exports.postCart = (req, res, next) => {
     .then(product => req.user.addToCart(product))
     .then(result => {
       // console.log(result);
-      res.redirect("/");
+      res.redirect("/cart");
     })
     .catch(err => {
       console.log(err);
