@@ -6,7 +6,7 @@ const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 const mongoConnect = require("./util/database").mongoConnect;
-const user = require("./models/user");
+const User = require("./models/user");
 
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
@@ -18,10 +18,10 @@ app.set("view engine", "pug");
 app.set("views", "views");
 
 app.use((req, res, next) => {
-  user
-    .findById("5e5c164d0bcdee56ec89e7b9")
+  User.findById("5e5c164d0bcdee56ec89e7b9")
     .then(usr => {
-      req.user = usr;
+      // req.user = usr;
+      req.user = new User(usr.name, usr.email, usr.cart, usr._id);
       next();
     })
     .catch(err => {
