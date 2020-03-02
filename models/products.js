@@ -67,7 +67,7 @@ class Product {
       .collection("products")
       .deleteOne({ _id: new mongodb.ObjectId(id) })
       .then(resualt => {
-        console.log("destroy", resualt);
+        // console.log("destroy", resualt);
       })
       .catch(error => {
         console.log("catch", error);

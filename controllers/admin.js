@@ -64,8 +64,14 @@ exports.postDeleteProduct = (req, res, next) => {
 
   Product.destroy(productId)
     .then(() => {
-      console.log("DESTROYED PRODUCT");
-      res.redirect("/admin/products");
+      console.log("REMOVED PRODUCT");
+      req.user
+        .removeFromCart(productId)
+        .then(() => {
+          console.log("REMOVED PRODUCT FROM CART");
+          res.redirect("/admin/products");
+        })
+        .catch(err => console.log(err));
     })
     .catch(err => console.log(err));
 };
