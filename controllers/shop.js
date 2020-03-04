@@ -2,7 +2,9 @@ const Product = require("../models/products");
 // const Order = require("../models/order");
 
 exports.getIndex = (req, res, next) => {
-  Product.findAll()
+  // #mongoose
+  // using built-in middleware API (find) mongoose for fetch-all document
+  Product.find()
     .then(product => {
       res.render("shop/index", {
         data: product,
@@ -13,6 +15,19 @@ exports.getIndex = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
+
+  // #mongoo
+  //   Product.findAll()
+  //     .then(product => {
+  //       res.render("shop/index", {
+  //         data: product,
+  //         title: "SHOP",
+  //         path: "/"
+  //       });
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
 };
 exports.getOrders = (req, res, next) => {
   req.user
@@ -38,7 +53,9 @@ exports.postOrders = (req, res, next) => {
     .catch(err => {});
 };
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  // # mongoose
+  // using built-in middleware API (find) mongoose for fetch-all document
+  Product.find()
     .then(product => {
       res.render("shop/index", {
         data: product,
@@ -49,15 +66,29 @@ exports.getProducts = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
+  // #mongoo
+  // Product.findAll()
+  //   .then(product => {
+  //     res.render("shop/index", {
+  //       data: product,
+  //       title: "Products List Page",
+  //       path: "/products"
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 };
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-
+  // #mongoose
+  // using built-in middleware API (findById) mongoose for fetch-single document
+  // auto convert string to ObjectId type in mongodb
   Product.findById(prodId)
     .then(product => {
       res.render("shop/product-detail", {
-        product: product, //product[0] when using toArray()
-        title: product.title, //product[0].title
+        product: product,
+        title: product.title,
         path: "/products"
       });
     })
@@ -65,6 +96,19 @@ exports.getProduct = (req, res, next) => {
       console.log("getProduct", err);
       res.status("404").send("<h1>Product not found</h1>");
     });
+  // #mongo
+  // Product.findById(prodId)
+  //   .then(product => {
+  //     res.render("shop/product-detail", {
+  //       product: product, //product[0] when using toArray()
+  //       title: product.title, //product[0].title
+  //       path: "/products"
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log("getProduct", err);
+  //     res.status("404").send("<h1>Product not found</h1>");
+  //   });
 };
 exports.getCart = (req, res, next) => {
   req.user
