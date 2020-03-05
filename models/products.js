@@ -18,6 +18,11 @@ const product = new schema({
   description: {
     type: String,
     required: true
+  },
+  userId: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+    ref: "User"
   }
 });
 
