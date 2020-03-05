@@ -112,12 +112,14 @@ exports.getProduct = (req, res, next) => {
 };
 exports.getCart = (req, res, next) => {
   req.user
-    .getCart()
-    .then(product => {
+    .populate("cart.items.productId")
+    .execPopulate() //If specified, a promise will not be returned
+    .then(user => {
+      // console.log(user.cart.items);
       res.render("shop/cart", {
         title: "Cart Page",
         path: "/cart",
-        data: product
+        data: user.cart.items
       });
     })
     .catch(err => {
