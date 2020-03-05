@@ -19,33 +19,44 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "pug");
 app.set("views", "views");
 
-// app.use((req, res, next) => {
-//   User.findById("5e5d207ec8e558168c483ed4")
-//     .then(usr => {
-//       // req.user = usr;
-//       req.user = new User(usr.name, usr.email, usr.cart, usr._id);
-//       next();
-//     })
-//     .catch(err => {
-//       console.log(err);
-//       throw err;
-//     });
-// });
+app.use((req, res, next) => {
+  User.findById("5e60b7e821b1da2de43511be")
+    .then(usr => {
+      req.user = usr;
+      next();
+    })
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+});
 
 // add Routes
 app.use(shopRoute);
 app.use("/admin", adminRouter);
 app.use(errorController.errorNotFound);
 
+// #mongo
 // mongoConnect(() => {
 //   app.listen(9000);
 // });
 
+// #mongoose
 mongoose
   .connect(
     "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop?retryWrites=true&w=majority"
   )
   .then(() => {
+    User.findOne().then(user => {
+      if (!user) {
+        user = new User({
+          name: "MohamadReza",
+          email: "sdg@dev.com",
+          cart: { items: [] }
+        });
+        user.save();
+      }
+    });
     app.listen(9000);
   })
   .catch(err => {
