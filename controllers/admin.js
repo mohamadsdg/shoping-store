@@ -142,7 +142,10 @@ exports.getProducts = (req, res, next) => {
   // #mongoose
   // using built-in middleware API mongoose for fetch-all document
   Product.find()
+    // .select("title price")
+    .populate("userId", "name -_id")
     .then(product => {
+      console.log("getProducts", product);
       res.render("admin/products", {
         data: product,
         title: "Products List Page In Admin",
