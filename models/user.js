@@ -62,6 +62,35 @@ userSchema.methods.removeFromCart = function(product) {
   };
   return this.save();
 };
+userSchema.methods.addOrder = function() {
+  return this.populate("cart.items.productId", "-userId")
+    .execPopulate()
+    .then(user => {
+      return user.cart.items.reduce((accumulator, current) => {
+        return [
+          ...accumulator,
+          {
+            product: { ...current.productId._doc }, // TIP : _doc  metadata attached to productId even though we can't directly see that when console logging
+            quantity: current.quantity
+          }
+        ];
+      }, []);
+    })
+    .then(products => {
+      // empty cart
+      this.cart.items = [];
+      this.save();
+      //end empty cart
+      return {
+        products: products,
+        user: { userId: this._id, name: this.name }
+      };
+    })
+    .catch(err => {
+      throw err;
+    });
+};
+
 module.exports = mongoose.model("User", userSchema);
 
 // #mongo

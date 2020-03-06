@@ -1,5 +1,5 @@
 const Product = require("../models/products");
-// const Order = require("../models/order");
+const Order = require("../models/order");
 
 exports.getIndex = (req, res, next) => {
   // #mongoose
@@ -30,10 +30,10 @@ exports.getIndex = (req, res, next) => {
   //     });
 };
 exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders()
+  // #mongoose
+  Order.find({ "user.userId": req.user })
     .then(order => {
-      // console.log("order", order);
+      console.log("order", order[0].products[0].product);
       res.render("shop/orders", {
         title: "Order Page",
         path: "/orders",
@@ -43,14 +43,44 @@ exports.getOrders = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
+  // #mongo
+  // req.user
+  //   .getOrders()
+  //   .then(order => {
+  //     // console.log("order", order);
+  //     res.render("shop/orders", {
+  //       title: "Order Page",
+  //       path: "/orders",
+  //       data: order
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 };
 exports.postOrders = (req, res, next) => {
+  // #mongoose
   req.user
     .addOrder()
-    .then(() => {
-      res.redirect("/orders");
+    .then(result => {
+      const order = new Order({
+        products: result.products,
+        user: result.user
+      });
+      return order.save();
     })
-    .catch(err => {});
+    .then(() => res.redirect("/orders"))
+    .catch(err => {
+      throw err;
+    });
+
+  // #mongoo
+  // req.user
+  //   .addOrder()
+  //   .then(() => {
+  //     res.redirect("/orders");
+  //   })
+  //   .catch(err => {});
 };
 exports.getProducts = (req, res, next) => {
   // # mongoose
