@@ -5,6 +5,7 @@ const path = require("path");
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
 const shopRoute = require("./routes/shop");
+const authRoute = require("./routes/auth");
 // const mongoConnect = require("./util/database").mongoConnect;
 const mongoose = require("mongoose");
 
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 // add Routes
 app.use(shopRoute);
 app.use("/admin", adminRouter);
+app.use(authRoute);
 app.use(errorController.errorNotFound);
 
 // #mongo
