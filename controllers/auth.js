@@ -1,6 +1,7 @@
+const User = require("../models/user");
+
 exports.getLogin = (req, res, next) => {
-  console.log("getLogin", req.session.isLoggin);
-  //   console.dir(req.get("Cookie"));
+  // console.dir(req.get("Cookie"));
   // let valCookie;
   // req.get("Cookie") &&
   //   req
@@ -12,13 +13,24 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     title: "Login",
     path: "/login",
-    has_login: req.session.isLoggin || false
+    has_login: false
   });
 };
 exports.postLogin = (req, res, next) => {
-  req.session.isLoggin = true;
+  User.findById("5e60b7e821b1da2de43511be").then(user => {
+    req.session.has_login = true;
+    req.session.user = user;
+    res.redirect("/");
+  });
   // res.cookie("isLoggin", "true");
   // res.setHeader("set-cookie", "isLoggin=true; HttpOnly");
   // console.log("postLogin", req.body);
-  res.redirect("/");
+  // res.redirect("/");
+};
+exports.postLogout = (req, res, next) => {
+  req.session.destroy(function(err) {
+    // cannot access session here
+    // console.log("postLogout", err);
+    res.redirect("/");
+  });
 };

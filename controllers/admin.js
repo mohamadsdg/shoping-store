@@ -4,7 +4,8 @@ exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     title: "Add Product",
     path: "admin/add-product",
-    editMode: false
+    editMode: false,
+    has_login: req.session.has_login
   });
 };
 exports.postAddProduct = (req, res, next) => {
@@ -60,7 +61,8 @@ exports.getEditProduct = (req, res, next) => {
         title: "Edit Product",
         path: "admin/edit-product",
         editMode: editMode,
-        product: product
+        product: product,
+        has_login: req.session.has_login
       });
     })
     .catch(err => {
@@ -149,7 +151,8 @@ exports.getProducts = (req, res, next) => {
       res.render("admin/products", {
         data: product,
         title: "Products List Page In Admin",
-        path: "admin/products"
+        path: "admin/products",
+        has_login: req.session.has_login
       });
     })
     .catch(err => {

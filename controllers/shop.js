@@ -9,7 +9,8 @@ exports.getIndex = (req, res, next) => {
       res.render("shop/index", {
         data: product,
         title: "SHOP",
-        path: "/"
+        path: "/",
+        has_login: req.session.has_login
       });
     })
     .catch(err => {
@@ -37,7 +38,8 @@ exports.getOrders = (req, res, next) => {
       res.render("shop/orders", {
         title: "Order Page",
         path: "/orders",
-        data: order
+        data: order,
+        has_login: req.session.has_login
       });
     })
     .catch(err => {
@@ -90,7 +92,8 @@ exports.getProducts = (req, res, next) => {
       res.render("shop/index", {
         data: product,
         title: "Products List Page",
-        path: "/products"
+        path: "/products",
+        has_login: req.session.has_login
       });
     })
     .catch(err => {
@@ -119,7 +122,8 @@ exports.getProduct = (req, res, next) => {
       res.render("shop/product-detail", {
         product: product,
         title: product.title,
-        path: "/products"
+        path: "/products",
+        has_login: req.session.has_login
       });
     })
     .catch(err => {
@@ -149,7 +153,8 @@ exports.getCart = (req, res, next) => {
       res.render("shop/cart", {
         title: "Cart Page",
         path: "/cart",
-        data: user.cart.items
+        data: user.cart.items,
+        has_login: req.session.has_login
       });
     })
     .catch(err => {
@@ -197,6 +202,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.getCheckout = (req, res, next) => {
   res.render("shop/checkout", {
     title: "Checkout Page",
-    path: "/checkout"
+    path: "/checkout",
+    has_login: req.session.has_login
   });
 };

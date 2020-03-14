@@ -19,8 +19,9 @@ block content
                             p.product__descriptionA #{product.description}
                         .card__actions
                             a(href="/products/" + product._id).btn Details
-                            form(action='/cart' method='POST')
-                                button(type="submit").btn Add to Cart
-                                input(type="hidden" name='productId' value=product._id)
+                            if has_login
+                                form(action='/cart' method='POST')
+                                    button(type="submit").btn Add to Cart
+                                    input(type="hidden" name='productId' value=product._id)
         else
             p Empty Product...
