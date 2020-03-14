@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const session = require("express-session");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -15,6 +16,10 @@ const User = require("./models/user");
 app.use(express.urlencoded({ extended: true }));
 // this middleware for serve static file (css|js|img ...)
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  session({ secret: "my secret", resave: false, saveUninitialized: false })
+);
 
 // add Themplate Engine
 app.set("view engine", "pug");
