@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -9,8 +10,15 @@ const shopRoute = require("./routes/shop");
 const authRoute = require("./routes/auth");
 // const mongoConnect = require("./util/database").mongoConnect;
 const mongoose = require("mongoose");
-
 const User = require("./models/user");
+
+const MONGODB_URI =
+  "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop?retryWrites=true&w=majority";
+
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions"
+});
 
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
@@ -18,7 +26,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-  session({ secret: "my secret", resave: false, saveUninitialized: false })
+  session({
+    secret: "shopingStore",
+    resave: false,
+    saveUninitialized: false,
+    store: store
+  })
 );
 
 // add Themplate Engine
@@ -50,9 +63,7 @@ app.use(errorController.errorNotFound);
 
 // #mongoose
 mongoose
-  .connect(
-    "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop?retryWrites=true&w=majority"
-  )
+  .connect(MONGODB_URI)
   .then(() => {
     User.findOne().then(user => {
       if (!user) {

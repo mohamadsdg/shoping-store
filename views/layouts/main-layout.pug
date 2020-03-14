@@ -19,7 +19,7 @@ html(lang="en")
                         a(href="/cart",class={active:path ==='/cart'}) Cart
                     li.main-header__item
                         a(href="/orders",class={active:path ==='/orders'}) Orders
-                    if has_login ==='true'
+                    if has_login
                         li.main-header__item
                             a(href="/admin/add-product?edit=false",class={active:path ==='/admin/add-product'}) Add Product
                         li.main-header__item
