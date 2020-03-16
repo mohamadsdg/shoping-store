@@ -80,16 +80,6 @@ app.use(errorController.errorNotFound);
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    User.findOne().then(user => {
-      if (!user) {
-        user = new User({
-          name: "MohamadReza",
-          email: "sdg@dev.com",
-          cart: { items: [] }
-        });
-        user.save();
-      }
-    });
     app.listen(9000);
   })
   .catch(err => {
