@@ -16,10 +16,31 @@ exports.getSignup = (req, res, next) => {
   });
 };
 exports.postLogin = (req, res, next) => {
-  User.findById("5e60b7e821b1da2de43511be").then(user => {
-    req.session.has_login = true;
-    req.session.user = user;
-    res.redirect("/");
+  const mail = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ email: mail }).then(user => {
+    if (!user) {
+      return res.redirect("/login");
+    }
+    bcrypt
+      .compare(password, user.password)
+      .then(result => {
+        // console.log("res", result);
+        if (result) {
+          req.session.has_login = true;
+          req.session.user = user;
+          return req.session.save(err => {
+            // console.log("save session err", err);
+            res.redirect("/");
+          });
+        }
+        return res.redirect("/login");
+      })
+      .catch(err => {
+        // console.log(err);
+        throw err;
+      });
   });
   // res.cookie("isLoggin", "true");
   // res.setHeader("set-cookie", "isLoggin=true; HttpOnly");
