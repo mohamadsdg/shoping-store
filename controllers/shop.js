@@ -34,7 +34,7 @@ exports.getOrders = (req, res, next) => {
   // #mongoose
   Order.find({ "user.userId": req.user })
     .then(order => {
-      console.log("order", order[0].products[0].product);
+      // console.log("order", order[0].products[0].product);
       res.render("shop/orders", {
         title: "Order Page",
         path: "/orders",
