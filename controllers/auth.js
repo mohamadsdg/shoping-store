@@ -31,13 +31,25 @@ exports.postSignup = (req, res, next) => {
   const password = req.body.password;
   User.findOne({ email: email })
     .then(user => {
-      if (user) res.redirect("/login");
-      return bcrypt.hash(password, 12);
-    })
-    .then(encrpPass => {
-      _user = new User({ email, password: encrpPass, carts: { items: [] } });
-      _user.save();
-      res.redirect("/");
+      if (user) {
+        return res.redirect("/login");
+      }
+      return bcrypt
+        .hash(password, 12)
+        .then(encrpPass => {
+          const _user = new User({
+            email,
+            password: encrpPass,
+            carts: { items: [] }
+          });
+          return _user.save();
+        })
+        .then(() => {
+          res.redirect("/");
+        })
+        .catch(err => {
+          throw err;
+        });
     })
     .catch(err => {
       throw err;
