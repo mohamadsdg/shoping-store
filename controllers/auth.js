@@ -5,14 +5,12 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     title: "Login",
     path: "/login",
-    has_login: false
   });
 };
 exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     title: "Signup",
     path: "/signup",
-    has_login: false
   });
 };
 exports.postLogin = (req, res, next) => {

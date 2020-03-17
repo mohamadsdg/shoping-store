@@ -20,6 +20,7 @@ block content
                         .card__actions
                             a(href="/products/" + product._id).btn Details
                             form(action='/cart' method='POST')
+                                input(type="hidden" name="_csrf" value=csrfToken )                 
                                 button(type="submit").btn Add to Cart
                                 input(type="hidden" name='productId' value=product._id)
         else

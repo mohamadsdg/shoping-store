@@ -52,6 +52,13 @@ app.use((req, res, next) => {
     });
 });
 
+app.use((req, res, next) => {
+  //  local variables scoped to the request | (available only to the views)
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.has_login = req.session.has_login;
+  next();
+});
+
 // add Themplate Engine
 app.set("view engine", "pug");
 app.set("views", "views");

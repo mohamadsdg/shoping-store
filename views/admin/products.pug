@@ -17,10 +17,11 @@ block content
                         .card__content
                             h2.product__price #{product.price}
                             p.product__descriptionA #{product.description}
-                            p.product__descriptionA added By Admin : #{product.userId.name}
+                            p.product__descriptionA added By Admin : #{product.userId.email}
                         .card__actions
                             a(href='/admin/edit-product/'+ product._id +'?edit=true').btn Edit    
                             form(action="/admin/delete-product", method='POST')     
+                                input(type="hidden" name="_csrf" value=csrfToken )                 
                                 input(type="hidden" name="productId" value=product._id)                   
                                 button(type="submit").btn Delete
         else

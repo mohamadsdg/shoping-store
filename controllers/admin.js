@@ -28,24 +28,6 @@ exports.postAddProduct = (req, res, next) => {
     .catch(err => {
       console.log("postAddProduct:catch", err);
     });
-
-  // #mongo
-  // const product = new Product(
-  //   title,
-  //   imageUrl,
-  //   price,
-  //   description,
-  //   null,
-  //   req.user._id
-  // );
-  // product
-  //   .save()
-  //   .then(resualt => {
-  //     res.redirect("/");
-  //   })
-  //   .catch(err => {
-  //     console.log("postAddProduct:catch", resualt);
-  //   });
 };
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
@@ -61,28 +43,13 @@ exports.getEditProduct = (req, res, next) => {
         title: "Edit Product",
         path: "admin/edit-product",
         editMode: editMode,
-        product: product,
-        has_login: req.session.has_login
+        product: product
       });
     })
     .catch(err => {
       console.log(err);
       res.status("404").send("<h1>Product not found</h1>");
     });
-  // #mongo
-  // Product.findById(prodId)
-  //   .then(product => {
-  //     res.render("admin/edit-product", {
-  //       title: "Edit Product",
-  //       path: "admin/edit-product",
-  //       editMode: editMode,
-  //       product: product
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     res.status("404").send("<h1>Product not found</h1>");
-  //   });
 };
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
@@ -104,17 +71,6 @@ exports.postEditProduct = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
-
-  // #mongo
-  // product
-  //   .save()
-  //   .then(result => {
-  //     console.log("UPDATED PRODUCT!");
-  //     res.redirect("/admin/products");
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
 };
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
@@ -126,49 +82,22 @@ exports.postDeleteProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch(err => console.log(err));
-  // #mongo
-  // Product.destroy(productId)
-  //   .then(() => {
-  //     console.log("REMOVED PRODUCT");
-  //     req.user
-  //       .removeFromCart(productId)
-  //       .then(() => {
-  //         console.log("REMOVED PRODUCT FROM CART");
-  //         res.redirect("/admin/products");
-  //       })
-  //       .catch(err => console.log(err));
-  //   })
-  //   .catch(err => console.log(err));
 };
 exports.getProducts = (req, res, next) => {
   // #mongoose
   // using built-in middleware API mongoose for fetch-all document
   Product.find()
     // .select("title price")
-    .populate("userId", "name -_id")
+    .populate("userId", "email -_id")
     .then(product => {
       console.log("getProducts", product);
       res.render("admin/products", {
         data: product,
         title: "Products List Page In Admin",
-        path: "admin/products",
-        has_login: req.session.has_login
+        path: "admin/products"
       });
     })
     .catch(err => {
       console.log(err);
     });
-
-  // #mongoo
-  //   Product.findAll()
-  //     .then(product => {
-  //       res.render("admin/products", {
-  //         data: product,
-  //         title: "Products List Page In Admin",
-  //         path: "admin/products"
-  //       });
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
 };
