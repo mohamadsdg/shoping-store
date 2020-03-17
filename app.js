@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -19,6 +20,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions"
 });
+var csrfProtection = csrf();
 
 // this middleware for pars body req
 app.use(express.urlencoded({ extended: true }));
@@ -33,6 +35,7 @@ app.use(
     store: store
   })
 );
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   if (!req.session.user) {

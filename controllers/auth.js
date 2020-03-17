@@ -77,6 +77,7 @@ exports.postSignup = (req, res, next) => {
     });
 };
 exports.postLogout = (req, res, next) => {
+  // console.log(req.body._csrf);
   req.session.destroy(function(err) {
     // cannot access session here
     // console.log("postLogout", err);

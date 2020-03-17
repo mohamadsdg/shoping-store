@@ -10,7 +10,8 @@ exports.getIndex = (req, res, next) => {
         data: product,
         title: "SHOP",
         path: "/",
-        has_login: req.session.has_login
+        has_login: req.session.has_login,
+        csrfToken: req.csrfToken()
       });
     })
     .catch(err => {
