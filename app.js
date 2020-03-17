@@ -4,6 +4,7 @@ const path = require("path");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
+var flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -36,6 +37,8 @@ app.use(
   })
 );
 app.use(csrfProtection);
+// Flash messages are stored in the session
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
