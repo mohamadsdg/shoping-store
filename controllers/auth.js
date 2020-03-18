@@ -3,14 +3,16 @@ const bcrypt = require("bcryptjs");
 
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key:
-        "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"
-    }
-  })
-);
+
+const transporter = nodemailer.createTransport({ 
+  host: "smtp.mailtrap.io",
+  port: 2525,
+  secure: false, // upgrade later with STARTTLS
+  auth: {
+    user: "fd03f82e5fdc49",
+    pass: "f611fafd47a224"
+  }
+});
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash("error");
