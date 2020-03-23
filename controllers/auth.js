@@ -1,10 +1,7 @@
 const User = require("../models/user");
 var crypto = require("crypto");
-
 const bcrypt = require("bcryptjs");
-
 const nodemailer = require("nodemailer");
-const sendgridTransport = require("nodemailer-sendgrid-transport");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
@@ -49,12 +46,28 @@ exports.getReset = (req, res, next) => {
 exports.getNewPassword = (req, res, next) => {
   let message = req.flash("error");
   message.length > 0 ? (message = message[0]) : (message = null);
-
-  res.render("auth/new_password", {
-    title: "Set new password",
-    path: "/reset",
-    errorMessage: message
-  });
+  User.findOne({
+    reset_token: req.params.token,
+    reset_token_exp: { $gt: Date.now() }
+  })
+    .then(user => {
+      // console.log("fulfiiled=========>", user);
+      if (!user) {
+        // req.flash("error", "wrong Url");
+        return res.redirect(`/404`);
+      }
+      return res.render("auth/new_password", {
+        title: "Set new password",
+        path: "/reset",
+        userId: user._id.toString(),
+        passwordToken: req.params.token,
+        errorMessage: message
+      });
+    })
+    .catch(rejected => {
+      // console.log("rejected", rejected);
+      throw rejected;
+    });
 };
 exports.postLogin = (req, res, next) => {
   const mail = req.body.email;
@@ -170,4 +183,44 @@ exports.postReset = (req, res, next) => {
         throw err;
       });
   });
+};
+exports.postNewPassword = (req, res, next) => {
+  const user_id = req.body.userId;
+  const password = req.body.password;
+  const passwordToken = req.body.passwordToken;
+  User.findOne({
+    _id: user_id,
+    reset_token_exp: { $gt: Date.now() },
+    reset_token: passwordToken
+  })
+    .then(user => {
+      console.log("user", user);
+      if (!user) {
+        req.flash("error", "user not found");
+        return res.redirect("/signup");
+      }
+      return bcrypt
+        .hash(password, 12)
+        .then(encrpPass => {
+          user.password = encrpPass;
+          user.reset_token = undefined;
+          user.reset_token_exp = undefined;
+          return user.save();
+        })
+        .then(() => {
+          res.redirect("/login");
+          transporter.sendMail({
+            to: user.email,
+            from: "shop@node-complete.com",
+            subject: "Change Password",
+            html: "<h1>You successfully Change Password</h1>"
+          });
+        })
+        .catch(err => {
+          throw err;
+        });
+    })
+    .catch(err => {
+      throw err;
+    });
 };
