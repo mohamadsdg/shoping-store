@@ -4,6 +4,8 @@ block style
     link(rel="stylesheet", href="/css/product.css")
 
 block content
+    if errorMessage     
+        div.user-message.user-message--error #{errorMessage}
     main
         h1 My Products
         if data.length > 0  

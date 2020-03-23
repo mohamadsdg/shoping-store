@@ -226,7 +226,7 @@ form {
 }
 
 .user-message {
-  margin: auto;
+  margin: 1% auto;
   width: 30%;
   border: 1px solid #4771fa;
   padding: 0.5rem;

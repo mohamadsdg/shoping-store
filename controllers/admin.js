@@ -4,8 +4,7 @@ exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     title: "Add Product",
     path: "admin/add-product",
-    editMode: false,
-    has_login: req.session.has_login
+    editMode: false
   });
 };
 exports.postAddProduct = (req, res, next) => {
@@ -37,8 +36,13 @@ exports.getEditProduct = (req, res, next) => {
   //#mongoose
   // using built-in middleware API (findById) mongoose for fetch-single document
   // auto convert string to ObjectId type in mongodb
-  Product.findById(prodId)
+  Product.findOne({ _id: prodId, userId: req.user._id })
     .then(product => {
+      console.log(`product`, product);
+      if (!product) {
+        req.flash("error", "access denied to Edit product!");
+        return res.redirect("/admin/products");
+      }
       res.render("admin/edit-product", {
         title: "Edit Product",
         path: "admin/edit-product",
@@ -48,7 +52,7 @@ exports.getEditProduct = (req, res, next) => {
     })
     .catch(err => {
       console.log(err);
-      res.status("404").send("<h1>Product not found</h1>");
+      // res.status("404").send("<h1>Product not found</h1>");
     });
 };
 exports.postEditProduct = (req, res, next) => {
@@ -76,25 +80,33 @@ exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
   // #mongoose
   // using built-in middleware API (findByIdAndDelete) mongoose for delete product
-  Product.findByIdAndDelete(productId)
-    .then(() => {
+  Product.deleteOne({ _id: productId, userId: req.user._id })
+    .then(fulfilled => {
+      // console.log("fulfilled", fulfilled.deletedCount);
+      if (!fulfilled.deletedCount) {
+        req.flash("error", "access denied to Delete product!");
+        return res.redirect("/admin/products");
+      }
       console.log("REMOVED PRODUCT");
       res.redirect("/admin/products");
     })
     .catch(err => console.log(err));
 };
 exports.getProducts = (req, res, next) => {
+  let message = req.flash("error");
+  message.length > 0 ? (message = message[0]) : (message = null);
+
   // #mongoose
   // using built-in middleware API mongoose for fetch-all document
-  Product.find()
+  Product.find() // for authorize hidden products  { userId: req.user._id }
     // .select("title price")
     .populate("userId", "email -_id")
     .then(product => {
-      console.log("getProducts", product);
       res.render("admin/products", {
         data: product,
         title: "Products List Page In Admin",
-        path: "admin/products"
+        path: "admin/products",
+        errorMessage: message
       });
     })
     .catch(err => {
