@@ -1,10 +1,12 @@
 const User = require("../models/user");
+var crypto = require("crypto");
+
 const bcrypt = require("bcryptjs");
 
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 
-const transporter = nodemailer.createTransport({ 
+const transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
   port: 2525,
   secure: false, // upgrade later with STARTTLS
@@ -31,6 +33,26 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     title: "Signup",
     path: "/signup",
+    errorMessage: message
+  });
+};
+exports.getReset = (req, res, next) => {
+  let message = req.flash("error");
+  message.length > 0 ? (message = message[0]) : (message = null);
+
+  res.render("auth/reset", {
+    title: "Reset",
+    path: "/reset",
+    errorMessage: message
+  });
+};
+exports.getNewPassword = (req, res, next) => {
+  let message = req.flash("error");
+  message.length > 0 ? (message = message[0]) : (message = null);
+
+  res.render("auth/new_password", {
+    title: "Set new password",
+    path: "/reset",
     errorMessage: message
   });
 };
@@ -114,5 +136,38 @@ exports.postLogout = (req, res, next) => {
     // cannot access session here
     // console.log("postLogout", err);
     res.redirect("/");
+  });
+};
+exports.postReset = (req, res, next) => {
+  const email = req.body.email;
+  crypto.randomBytes(24, (err, buf) => {
+    if (err) throw err;
+    const token = buf.toString("hex");
+    User.findOne({ email: email })
+      .then(user => {
+        if (!user) {
+          req.flash("error", "No account with that email found.");
+          return res.redirect("/reset");
+        }
+        user.reset_token = token;
+        user.reset_token_exp = Date.now() + 3600000; //on hour
+        return user.save();
+      })
+      .then(() => {
+        res.redirect("/");
+        transporter.sendMail({
+          to: email,
+          from: "shop@node-complete.com",
+          subject: "Reset password",
+          html: ` 
+                <p> you Requested a password reset</p>
+                <p>Click this <a href='http://localhost:9000/reset/${token}'>Link</a> to set a new Password.</P>
+                `
+        });
+      })
+      .catch(err => {
+        // console.log("===========>", err);
+        throw err;
+      });
   });
 };
