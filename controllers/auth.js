@@ -2,6 +2,7 @@ const User = require("../models/user");
 var crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const { validationResult } = require("express-validator");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
@@ -70,9 +71,18 @@ exports.getNewPassword = (req, res, next) => {
     });
 };
 exports.postLogin = (req, res, next) => {
+  const validateResult = validationResult(req);
   const mail = req.body.email;
   const password = req.body.password;
-
+  console.log(validateResult.errors, validateResult.isEmpty());
+  if (!validateResult.isEmpty()) {
+    // req.flash("error", validateResult.errors[0].msg);
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: validateResult.errors[0].msg
+    });
+  }
   User.findOne({ email: mail }).then(user => {
     if (!user) {
       req.flash("error", "Invalid email or password ...");
