@@ -74,7 +74,7 @@ exports.postLogin = (req, res, next) => {
   const validateResult = validationResult(req);
   const mail = req.body.email;
   const password = req.body.password;
-  console.log(validateResult.errors, validateResult.isEmpty());
+  // console.log(validateResult.errors, validateResult.isEmpty());
   if (!validateResult.isEmpty()) {
     // req.flash("error", validateResult.errors[0].msg);
     return res.status(422).render("auth/login", {

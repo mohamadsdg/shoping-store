@@ -12,7 +12,14 @@ router.post(
   "/login",
   check("email")
     .isEmail()
-    .withMessage("Please enter a valid email."),
+    .withMessage("Please enter a valid email.")
+    .custom((value,{req})=>{
+      console.log(value);
+      if(value === 'mohamad.r.sadeghi93@gmail.com' ) 
+        throw new Error('forbidden email')
+        
+      return true
+    }),
   authController.postLogin
 );
 router.post("/logout", authController.postLogout);
