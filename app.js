@@ -5,6 +5,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 var flash = require("connect-flash");
+const morgan = require("morgan");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -61,6 +62,8 @@ app.use((req, res, next) => {
   res.locals.has_login = req.session.has_login;
   next();
 });
+
+app.use(morgan("dev"));
 
 // add Themplate Engine
 app.set("view engine", "pug");
