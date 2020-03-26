@@ -17,13 +17,13 @@ router.post(
       console.log(value);
       if(value === 'mohamad.r.sadeghi93@gmail.com' ) 
         throw new Error('forbidden email')
-        
+
       return true
     }),
   authController.postLogin
 );
 router.post("/logout", authController.postLogout);
-router.post("/signup", authController.postSignup);
+router.post("/signup",[check('email').isEmail(),check('password')], authController.postSignup);
 router.post("/reset", authController.postReset);
 router.post("/new-password", authController.postNewPassword);
 
