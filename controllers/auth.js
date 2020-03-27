@@ -31,7 +31,8 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     title: "Signup",
     path: "/signup",
-    errorMessage: message
+    errorMessage: message,
+    oldInput: { email: "", password: "", confirm_pass: "" }
   });
 };
 exports.getReset = (req, res, next) => {
@@ -121,7 +122,8 @@ exports.postSignup = (req, res, next) => {
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
-      errorMessage: validateResult.errors[0].msg
+      errorMessage: validateResult.errors[0].msg,
+      oldInput: { email, password, confirm_pass: req.body.confirmPassword }
     });
   }
   bcrypt
