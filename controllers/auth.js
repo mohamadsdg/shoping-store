@@ -114,40 +114,35 @@ exports.postLogin = (req, res, next) => {
   // res.redirect("/");
 };
 exports.postSignup = (req, res, next) => {
+  const validateResult = validationResult(req);
   const email = req.body.email;
   const password = req.body.password;
-  User.findOne({ email: email })
-    .then(user => {
-      if (user) {
-        req.flash(
-          "error",
-          "E-mail exsist already, please pick a diffrent mail "
-        );
-        return res.redirect("/signup");
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then(encrpPass => {
-          const _user = new User({
-            email,
-            password: encrpPass,
-            carts: { items: [] }
-          });
-          return _user.save();
-        })
-        .then(() => {
-          res.redirect("/");
-          transporter.sendMail({
-            to: email,
-            from: "shop@node-complete.com",
-            subject: "Signup succeeded!",
-            text: "Awesome sauce",
-            html: "<h1>You successfully signed up!</h1>"
-          });
-        })
-        .catch(err => {
-          throw err;
-        });
+  if (!validateResult.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: validateResult.errors[0].msg
+    });
+  }
+  bcrypt
+    .hash(password, 12)
+    .then(encrpPass => {
+      const _user = new User({
+        email,
+        password: encrpPass,
+        carts: { items: [] }
+      });
+      return _user.save();
+    })
+    .then(() => {
+      res.redirect("/");
+      transporter.sendMail({
+        to: email,
+        from: "shop@node-complete.com",
+        subject: "Signup succeeded!",
+        text: "Awesome sauce",
+        html: "<h1>You successfully signed up!</h1>"
+      });
     })
     .catch(err => {
       throw err;
