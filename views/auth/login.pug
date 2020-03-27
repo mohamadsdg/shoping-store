@@ -12,10 +12,10 @@ block content
             input(type="hidden" name="_csrf" value=csrfToken )                    
             .form-control
                 label(for="email") E-Mail
-                input(type="email", name="email" )#email
+                input(type="email", name="email",class={invalid: validationError.email}, value=oldInput.email )#email
             .form-control
                 label(for="password") Password
-                input(type="password", name="password")#password                       
+                input(type="password", name="password",class={invalid: validationError.password},value=oldInput.password)#password                       
             button.btn(type="submit") Login
         div.centered 
             a(href="/reset") Reset Password

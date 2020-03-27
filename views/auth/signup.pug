@@ -12,11 +12,11 @@ block content
             input(type="hidden" name="_csrf" value=csrfToken )                 
             .form-control
                 label(for="email") E-Mail
-                input(type="email", name="email" value=oldInput.email)#email
+                input(type="email", name="email" ,class={invalid: validationError.email} , value=oldInput.email)#email                
             .form-control
                 label(for="password") Password
-                input(type="password", name="password" value=oldInput.password)#password  
+                input(type="password", name="password",class={invalid: validationError.password},value=oldInput.password)#password  
             .form-control
                 label(for="confirmPassword") Confirm Password
-                input(type="password", name="confirmPassword" value=oldInput.confirm_pass)#confirmPassword                       
+                input(type="password", name="confirmPassword",class={invalid: validationError.confirm_pass}, value=oldInput.confirm_pass)#confirmPassword                       
             button.btn(type="submit") SignUp

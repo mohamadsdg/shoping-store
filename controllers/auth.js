@@ -21,7 +21,9 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     title: "Login",
     path: "/login",
-    errorMessage: message
+    errorMessage: message,
+    oldInput: { email: "", password: "" },
+    validationError: { email: false, password: false }
   });
 };
 exports.getSignup = (req, res, next) => {
@@ -32,7 +34,8 @@ exports.getSignup = (req, res, next) => {
     title: "Signup",
     path: "/signup",
     errorMessage: message,
-    oldInput: { email: "", password: "", confirm_pass: "" }
+    oldInput: { email: "", password: "", confirm_pass: "" },
+    validationError: { email: false, password: false, confirm_pass: false }
   });
 };
 exports.getReset = (req, res, next) => {
@@ -75,19 +78,39 @@ exports.postLogin = (req, res, next) => {
   const validateResult = validationResult(req);
   const mail = req.body.email;
   const password = req.body.password;
-  // console.log(validateResult.errors, validateResult.isEmpty());
+  console.log("validateResult login", validateResult);
+  /**
+   * for css class
+   */
+  let rstEmail = validateResult.errors.find(e => e.param === "email");
+  let rstPass = validateResult.errors.find(e => e.param === "password");
+
   if (!validateResult.isEmpty()) {
     // req.flash("error", validateResult.errors[0].msg);
     return res.status(422).render("auth/login", {
       path: "/login",
       pageTitle: "Login",
-      errorMessage: validateResult.errors[0].msg
+      errorMessage: validateResult.errors[0].msg,
+      oldInput: { email: mail, password },
+      validationError: {
+        email: !!rstEmail,
+        password: !!rstPass
+      }
     });
   }
   User.findOne({ email: mail }).then(user => {
     if (!user) {
-      req.flash("error", "Invalid email or password ...");
-      return res.redirect("/login");
+      // req.flash("error", "Invalid email or password ...");
+      return res.status(422).render("auth/login", {
+        path: "/login",
+        pageTitle: "Login",
+        errorMessage: "Invalid email or password ...",
+        oldInput: { email: mail, password },
+        validationError: {
+          email: true,
+          password: true
+        }
+      });
     }
     bcrypt
       .compare(password, user.password)
@@ -101,8 +124,17 @@ exports.postLogin = (req, res, next) => {
             res.redirect("/");
           });
         }
-        req.flash("error", "Invalid password ...");
-        return res.redirect("/login");
+        // req.flash("error", "Invalid password ...");
+        return res.status(422).render("auth/login", {
+          path: "/login",
+          pageTitle: "Login",
+          errorMessage: "Invalid password ...",
+          oldInput: { email: mail, password },
+          validationError: {
+            email: true,
+            password: true
+          }
+        });
       })
       .catch(err => {
         // console.log(err);
@@ -118,12 +150,26 @@ exports.postSignup = (req, res, next) => {
   const validateResult = validationResult(req);
   const email = req.body.email;
   const password = req.body.password;
+  /**
+   * for css class
+   */
+  let rstEmail = validateResult.errors.find(e => e.param === "email");
+  let rstPass = validateResult.errors.find(e => e.param === "password");
+  let rstConfirm_pass = validateResult.errors.find(e => e.param === "password");
+  /**
+   *
+   */
   if (!validateResult.isEmpty()) {
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
       errorMessage: validateResult.errors[0].msg,
-      oldInput: { email, password, confirm_pass: req.body.confirmPassword }
+      oldInput: { email, password, confirm_pass: req.body.confirmPassword },
+      validationError: {
+        email: !!rstEmail,
+        password: !!rstPass,
+        confirm_pass: !!rstConfirm_pass
+      }
     });
   }
   bcrypt
