@@ -13,6 +13,8 @@ router.post(
   "/login",
   [
     check("email")
+      .trim()
+      .normalizeEmail()
       .isEmail()
       .withMessage("Please enter a valid email.")
       .custom((value, { req }) => {
@@ -22,10 +24,12 @@ router.post(
 
         return true;
       }),
-    body("password", "password is required").custom((value, { req }) => {
-      if (!value) throw new Error();
-      return true;
-    })
+    body("password", "password is required")
+      .trim()
+      .custom((value, { req }) => {
+        if (!value) throw new Error();
+        return true;
+      })
   ],
   authController.postLogin
 );
@@ -34,6 +38,8 @@ router.post(
   "/signup",
   [
     body("email")
+      .trim()
+      .normalizeEmail()
       .isEmail()
       .withMessage("Please enter a valid email.")
       .custom((value, { req }) => {
@@ -46,14 +52,17 @@ router.post(
         });
       }),
     body("password", "password has letter and between 2-6 character")
+      .trim()
       .isLength({ min: 2, max: 6 })
       .isAlphanumeric(),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("password not Match");
-      }
-      return true;
-    })
+    body("confirmPassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("password not Match");
+        }
+        return true;
+      })
   ],
   authController.postSignup
 );
