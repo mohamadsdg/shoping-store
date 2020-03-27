@@ -1,16 +1,58 @@
 const Product = require("../models/products");
+const { validationResult } = require("express-validator/check");
 
 exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     title: "Add Product",
     path: "admin/add-product",
-    editMode: false
+    editMode: false,
+    oldInput: {
+      title: "",
+      imageUrl: "",
+      price: "",
+      description: ""
+    },
+    validationError: {
+      email: false,
+      imageUrl: false,
+      price: false,
+      description: false
+    }
   });
 };
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  // #mongoos
-  // using built in API mongoose for save document
+  const validateResult = validationResult(req);
+
+  /**
+   * for css class
+   */
+  let rstTitle = validateResult.errors.find(e => e.param === "title");
+  let rstUrl = validateResult.errors.find(e => e.param === "imageUrl");
+  let rstPrice = validateResult.errors.find(e => e.param === "price");
+  let rstDesc = validateResult.errors.find(e => e.param === "description");
+
+  if (!validateResult.isEmpty()) {
+    // req.flash("error", validateResult.errors[0].msg);
+    return res.status(422).render("admin/add-product", {
+      path: "admin/add-product",
+      title: "Add Product",
+      errorMessage: validateResult.errors,
+      editMode: false,
+      oldInput: {
+        title: title,
+        imageUrl: imageUrl,
+        price: price,
+        description: description
+      },
+      validationError: {
+        title: !!rstTitle,
+        imageUrl: !!rstUrl,
+        price: !!rstPrice,
+        description: !!rstDesc
+      }
+    });
+  }
   const product = new Product({
     title,
     imageUrl,
@@ -47,7 +89,14 @@ exports.getEditProduct = (req, res, next) => {
         title: "Edit Product",
         path: "admin/edit-product",
         editMode: editMode,
-        product: product
+        product: product,
+        hasError: false,
+        validationError: {
+          email: false,
+          imageUrl: false,
+          price: false,
+          description: false
+        }
       });
     })
     .catch(err => {
@@ -57,6 +106,41 @@ exports.getEditProduct = (req, res, next) => {
 };
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
+
+  const validateResult = validationResult(req);
+  console.log(validateResult.errors);
+  /**
+   * for css class
+   */
+  let rstTitle = validateResult.errors.find(e => e.param === "title");
+  let rstUrl = validateResult.errors.find(e => e.param === "imageUrl");
+  let rstPrice = validateResult.errors.find(e => e.param === "price");
+  let rstDesc = validateResult.errors.find(e => e.param === "description");
+
+  if (!validateResult.isEmpty()) {
+    // req.flash("error", validateResult.errors[0].msg);
+    return res.status(422).render(`admin/edit-product`, {
+      path: "admin/edit-product",
+      title: "Edit Product",
+      errorMessage: validateResult.errors,
+      editMode: true,
+      hasError: true,
+      oldInput: {
+        title: title,
+        imageUrl: imageUrl,
+        price: price,
+        description: description,
+        productId: productId
+      },
+      validationError: {
+        title: !!rstTitle,
+        imageUrl: !!rstUrl,
+        price: !!rstPrice,
+        description: !!rstDesc
+      }
+    });
+  }
+
   // #mongoos
   // using built-in middleware API (findById) mongoose for fetch-single product
   // update procedural product then usgin save API

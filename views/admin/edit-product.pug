@@ -6,20 +6,24 @@ block style
 
 block content
     main
+        if errorMessage     
+                div.user-message.user-message--error 
+                    each err in errorMessage
+                        div #{err.param} : #{err.msg}
         form.product-form(action= editMode ? "/admin/edit-product": "/admin/add-product" ,method="POST")
             input(type="hidden" name="_csrf" value=csrfToken )                 
             .form-control
                 label(for="title") Title
-                input(type="text", name="title",value= editMode && product.title)#title
+                input(type="text", name="title",class={invalid:validationError.title}, value= editMode && !hasError ? product.title : oldInput.title)#title
             .form-control
                 label(for="imageUrl") Image URL
-                input(type="text", name="imageUrl" ,value= editMode && product.imageUrl)#imageUrl
+                input(type="text", name="imageUrl",class={invalid:validationError.imageUrl} ,value= editMode && !hasError ? product.imageUrl : oldInput.imageUrl)#imageUrl
             .form-control
                 label(for="price") price
-                input(type="text", name="price",step="0.01",value= editMode && product.price)#price
+                input(type="text", name="price",class={invalid:validationError.price},step="0.01",value= editMode && !hasError ? product.price : oldInput.price)#price
             .form-control
                 label(for="description") description
-                textarea(name="description")#description #{editMode ? product.description :''}
+                textarea(name="description",class={invalid:validationError.description})#description #{editMode ? !hasError ?  product.description : oldInput.description :''}
             if editMode
-                input(type="hidden" name="productId" value=product._id)
+                input(type="hidden" name="productId" value= !hasError ? product._id : oldInput.productId)
             button(type="submit") #{editMode ? 'Update Product':'Add Product'}

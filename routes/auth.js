@@ -14,7 +14,6 @@ router.post(
   [
     check("email")
       .trim()
-      .normalizeEmail()
       .isEmail()
       .withMessage("Please enter a valid email.")
       .custom((value, { req }) => {
