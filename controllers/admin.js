@@ -1,4 +1,5 @@
 const Product = require("../models/products");
+const mongoos = require("mongoose");
 const { validationResult } = require("express-validator/check");
 
 exports.getAddProduct = (req, res, next) => {
@@ -54,7 +55,7 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
   const product = new Product({
-    title,
+    _id: new mongoos.Types.ObjectId("5e78d8314972fd2c58c15378"),
     imageUrl,
     price,
     description,
@@ -67,7 +68,30 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect("/");
     })
     .catch(err => {
-      console.log("postAddProduct:catch", err);
+      // console.log("postAddProduct:catch", err);
+      // throw new Error(err);
+      // return res.status(500).render("admin/add-product", {
+      //   path: "admin/add-product",
+      //   title: "Add Product",
+      //   errorMessage: [
+      //     { param: "Error", msg: "data base operator has failed" }
+      //   ],
+      //   editMode: false,
+      //   oldInput: {
+      //     title: title,
+      //     imageUrl: imageUrl,
+      //     price: price,
+      //     description: description
+      //   },
+      //   validationError: {
+      //     title: !!rstTitle,
+      //     imageUrl: !!rstUrl,
+      //     price: !!rstPrice,
+      //     description: !!rstDesc
+      //   }
+      // });
+
+      res.redirect("/500");
     });
 };
 exports.getEditProduct = (req, res, next) => {

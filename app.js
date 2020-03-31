@@ -48,11 +48,14 @@ app.use((req, res, next) => {
 
   User.findById(req.session.user._id)
     .then(user => {
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
     .catch(err => {
-      throw err;
+      throw new Error(err);
     });
 });
 
@@ -64,6 +67,10 @@ app.use((req, res, next) => {
 });
 
 app.use(morgan("dev"));
+
+// app.use((err, req, res, next) => {
+
+// });
 
 // add Themplate Engine
 app.set("view engine", "pug");
@@ -85,6 +92,7 @@ app.set("views", "views");
 app.use(shopRoute);
 app.use("/admin", adminRouter);
 app.use(authRoute);
+app.get("/500", errorController.error500);
 app.use(errorController.errorNotFound);
 
 // #mongo
