@@ -42,12 +42,20 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
-  // throw new Error('Dummy')
+  //  local variables scoped to the request | (available only to the views)
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.has_login = req.session.has_login;
+  next();
+});
+
+app.use((req, res, next) => {
+  // throw new Error("Sync Dummy");
   if (!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
     .then(user => {
+      // throw new Error("Async Dummy");
       if (!user) {
         return next();
       }
@@ -55,15 +63,9 @@ app.use((req, res, next) => {
       next();
     })
     .catch(err => {
-      throw new Error(err);
+      // throw new Error(err);
+      next(err);
     });
-});
-
-app.use((req, res, next) => {
-  //  local variables scoped to the request | (available only to the views)
-  res.locals.csrfToken = req.csrfToken();
-  res.locals.has_login = req.session.has_login;
-  next();
 });
 
 app.use(morgan("dev"));
@@ -92,12 +94,25 @@ app.get("/500", errorController.error500);
 app.use(errorController.errorNotFound);
 
 // Error handle
+/**
+ * tip : synchronous places eg:("Sync Dummy") so outside of callbacks and promises you throw in error and express will detect this and execute  your next error handling middleware
+ *       inside of async code (Then catch or callbacks) eg:("Async Dummy") you have to use next with an error or include it then detected by express again
+ */
 app.use((err, req, res, next) => {
   // console.log("app.use", err, err.stack, err.name, err.message);
   // console.log("app.use", err.name);
   // res.status(500).send("Something broke!");
-  req.flash("error500", err);
-  res.status(err.httpStatusCode).redirect("/500");
+
+  // req.flash("error500", err);
+  // res.status(err.httpStatusCode).redirect("/500");
+
+  err.name = err.name;
+  err.errmsg = err.message;
+  err.currentStack = err.stack;
+  err.httpStatusCode = 500;
+  res
+    .status(500)
+    .render("500", { title: "Error !", path: "/500", errorMessage: err });
 });
 
 // #mongo
