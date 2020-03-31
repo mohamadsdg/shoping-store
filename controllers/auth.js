@@ -137,8 +137,11 @@ exports.postLogin = (req, res, next) => {
         });
       })
       .catch(err => {
-        // console.log(err);
-        throw err;
+        err.name = err.name;
+        err.errmsg = err.message;
+        err.currentStack = err.stack;
+        err.httpStatusCode = 500;
+        return next(err);
       });
   });
   // res.cookie("isLoggin", "true");
@@ -193,7 +196,11 @@ exports.postSignup = (req, res, next) => {
       });
     })
     .catch(err => {
-      throw err;
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.currentStack = err.stack;
+      err.httpStatusCode = 500;
+      return next(err);
     });
 };
 exports.postLogout = (req, res, next) => {
@@ -233,7 +240,11 @@ exports.postReset = (req, res, next) => {
       })
       .catch(err => {
         // console.log("===========>", err);
-        throw err;
+        err.name = err.name;
+        err.errmsg = err.message;
+        err.currentStack = err.stack;
+        err.httpStatusCode = 500;
+        return next(err);
       });
   });
 };
@@ -270,10 +281,18 @@ exports.postNewPassword = (req, res, next) => {
           });
         })
         .catch(err => {
-          throw err;
+          err.name = err.name;
+          err.errmsg = err.message;
+          err.currentStack = err.stack;
+          err.httpStatusCode = 500;
+          return next(err);
         });
     })
     .catch(err => {
-      throw err;
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.currentStack = err.stack;
+      err.httpStatusCode = 500;
+      return next(err);
     });
 };

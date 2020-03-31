@@ -55,7 +55,7 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
   const product = new Product({
-    _id: new mongoos.Types.ObjectId("5e78d8314972fd2c58c15378"),
+    title,
     imageUrl,
     price,
     description,
@@ -90,8 +90,21 @@ exports.postAddProduct = (req, res, next) => {
       //     description: !!rstDesc
       //   }
       // });
+      // res.redirect("/500");
 
-      res.redirect("/500");
+      // console.log("catch postAddProduct : ====>", err);
+      // console.log("catch postAddProduct NEW : ====>", new Error(err));
+
+      // const _err = new Error(err);
+      // _err.httpStatusCode = 500;
+      // return next(_err);
+
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.httpStatusCode = 500;
+      err.currentStack = err.stack;
+
+      return next(err);
     });
 };
 exports.getEditProduct = (req, res, next) => {
@@ -104,7 +117,7 @@ exports.getEditProduct = (req, res, next) => {
   // auto convert string to ObjectId type in mongodb
   Product.findOne({ _id: prodId, userId: req.user._id })
     .then(product => {
-      console.log(`product`, product);
+      // console.log(`product`, product);
       if (!product) {
         req.flash("error", "access denied to Edit product!");
         return res.redirect("/admin/products");
@@ -124,7 +137,13 @@ exports.getEditProduct = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.currentStack = err.stack;
+      err.httpStatusCode = 500;
+
+      return next(err);
+
       // res.status("404").send("<h1>Product not found</h1>");
     });
 };
@@ -181,7 +200,11 @@ exports.postEditProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch(err => {
-      console.log(err);
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.currentStack = err.stack;
+      err.httpStatusCode = 500;
+      return next(err);
     });
 };
 exports.postDeleteProduct = (req, res, next) => {
@@ -198,7 +221,13 @@ exports.postDeleteProduct = (req, res, next) => {
       console.log("REMOVED PRODUCT");
       res.redirect("/admin/products");
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.currentStack = err.stack;
+      err.httpStatusCode = 500;
+      return next(err);
+    });
 };
 exports.getProducts = (req, res, next) => {
   let message = req.flash("error");
@@ -218,6 +247,10 @@ exports.getProducts = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      err.name = err.name;
+      err.errmsg = err.message;
+      err.currentStack = err.stack;
+      err.httpStatusCode = 500;
+      return next(err);
     });
 };

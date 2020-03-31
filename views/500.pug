@@ -1,4 +1,9 @@
 extends layouts/main-layout.pug
 
 block content
-    h1 Something went wrong !
+    h1 Something went wrong !  
+    if(errorMessage)
+        p status : #{errorMessage.httpStatusCode}
+        p type : #{errorMessage.name}
+        p message : #{errorMessage.errmsg}
+        p Current Stack : #{errorMessage.currentStack}

@@ -42,10 +42,10 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  // throw new Error('Dummy')
   if (!req.session.user) {
     return next();
   }
-
   User.findById(req.session.user._id)
     .then(user => {
       if (!user) {
@@ -67,10 +67,6 @@ app.use((req, res, next) => {
 });
 
 app.use(morgan("dev"));
-
-// app.use((err, req, res, next) => {
-
-// });
 
 // add Themplate Engine
 app.set("view engine", "pug");
@@ -94,6 +90,15 @@ app.use("/admin", adminRouter);
 app.use(authRoute);
 app.get("/500", errorController.error500);
 app.use(errorController.errorNotFound);
+
+// Error handle
+app.use((err, req, res, next) => {
+  // console.log("app.use", err, err.stack, err.name, err.message);
+  // console.log("app.use", err.name);
+  // res.status(500).send("Something broke!");
+  req.flash("error500", err);
+  res.status(err.httpStatusCode).redirect("/500");
+});
 
 // #mongo
 // mongoConnect(() => {
