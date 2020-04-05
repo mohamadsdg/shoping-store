@@ -10,14 +10,14 @@ block content
             div.user-message.user-message--error 
                 each err in errorMessage
                     div #{err.param} : #{err.msg}
-        form.product-form(action="/admin/add-product" ,method="POST")
+        form.product-form(action="/admin/add-product" ,method="POST",enctype="multipart/form-data")
             input(type="hidden" name="_csrf" value=csrfToken )                 
             .form-control
                 label(for="title") Title
                 input(type="text", name="title" class={invalid:validationError.title} value=oldInput.title)#title
             .form-control
-                label(for="imageUrl") Image URL
-                input(type="text", name="imageUrl" class={invalid:validationError.imageUrl} value=oldInput.imageUrl)#imageUrl
+                label(for="imageUrl") Image 
+                input(type="file", name="imageUrl")#imageUrl
             .form-control
                 label(for="price") price
                 input(type="text", name="price",step="0.01" class={invalid:validationError.price} value=oldInput.price)#price

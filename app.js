@@ -14,18 +14,24 @@ const authRoute = require("./routes/auth");
 // const mongoConnect = require("./util/database").mongoConnect;
 const mongoose = require("mongoose");
 const User = require("./models/user");
+const multer = require("multer");
 
 const MONGODB_URI =
   "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop?retryWrites=true&w=majority";
 
 const store = new MongoDBStore({
   uri: MONGODB_URI,
-  collection: "sessions"
+  collection: "sessions",
 });
 var csrfProtection = csrf();
 
-// this middleware for pars body req
+/**
+ * this middleware for pars body req just text data
+ */
 app.use(express.urlencoded({ extended: true }));
+// using multer for binary data
+app.use(multer().single("imageUrl"));
+
 // this middleware for serve static file (css|js|img ...)
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -34,7 +40,7 @@ app.use(
     secret: "shopingStore",
     resave: false,
     saveUninitialized: false,
-    store: store
+    store: store,
   })
 );
 app.use(csrfProtection);
@@ -54,7 +60,7 @@ app.use((req, res, next) => {
     return next();
   }
   User.findById(req.session.user._id)
-    .then(user => {
+    .then((user) => {
       // throw new Error("Async Dummy");
       if (!user) {
         return next();
@@ -62,7 +68,7 @@ app.use((req, res, next) => {
       req.user = user;
       next();
     })
-    .catch(err => {
+    .catch((err) => {
       // throw new Error(err);
       next(err);
     });
@@ -126,6 +132,6 @@ mongoose
   .then(() => {
     app.listen(9000);
   })
-  .catch(err => {
+  .catch((err) => {
     throw new Error("Error on initial connection ....");
   });

@@ -11,27 +11,27 @@ exports.getAddProduct = (req, res, next) => {
       title: "",
       imageUrl: "",
       price: "",
-      description: ""
+      description: "",
     },
     validationError: {
       email: false,
       imageUrl: false,
       price: false,
-      description: false
-    }
+      description: false,
+    },
   });
 };
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
   const validateResult = validationResult(req);
-
+  console.log(req.body, req.file);
   /**
    * for css class
    */
-  let rstTitle = validateResult.errors.find(e => e.param === "title");
-  let rstUrl = validateResult.errors.find(e => e.param === "imageUrl");
-  let rstPrice = validateResult.errors.find(e => e.param === "price");
-  let rstDesc = validateResult.errors.find(e => e.param === "description");
+  let rstTitle = validateResult.errors.find((e) => e.param === "title");
+  let rstUrl = validateResult.errors.find((e) => e.param === "imageUrl");
+  let rstPrice = validateResult.errors.find((e) => e.param === "price");
+  let rstDesc = validateResult.errors.find((e) => e.param === "description");
 
   if (!validateResult.isEmpty()) {
     // req.flash("error", validateResult.errors[0].msg);
@@ -44,14 +44,14 @@ exports.postAddProduct = (req, res, next) => {
         title: title,
         imageUrl: imageUrl,
         price: price,
-        description: description
+        description: description,
       },
       validationError: {
         title: !!rstTitle,
         imageUrl: !!rstUrl,
         price: !!rstPrice,
-        description: !!rstDesc
-      }
+        description: !!rstDesc,
+      },
     });
   }
   const product = new Product({
@@ -59,15 +59,15 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl,
     price,
     description,
-    userId: req.user
+    userId: req.user,
   });
   product
     .save()
-    .then(resualt => {
+    .then((resualt) => {
       console.log("CREATE PRODUCT");
       res.redirect("/");
     })
-    .catch(err => {
+    .catch((err) => {
       // console.log("postAddProduct:catch", err);
       // throw new Error(err);
       // return res.status(500).render("admin/add-product", {
@@ -116,7 +116,7 @@ exports.getEditProduct = (req, res, next) => {
   // using built-in middleware API (findById) mongoose for fetch-single document
   // auto convert string to ObjectId type in mongodb
   Product.findOne({ _id: prodId, userId: req.user._id })
-    .then(product => {
+    .then((product) => {
       // console.log(`product`, product);
       if (!product) {
         req.flash("error", "access denied to Edit product!");
@@ -132,11 +132,11 @@ exports.getEditProduct = (req, res, next) => {
           email: false,
           imageUrl: false,
           price: false,
-          description: false
-        }
+          description: false,
+        },
       });
     })
-    .catch(err => {
+    .catch((err) => {
       err.name = err.name;
       err.errmsg = err.message;
       err.currentStack = err.stack;
@@ -155,10 +155,10 @@ exports.postEditProduct = (req, res, next) => {
   /**
    * for css class
    */
-  let rstTitle = validateResult.errors.find(e => e.param === "title");
-  let rstUrl = validateResult.errors.find(e => e.param === "imageUrl");
-  let rstPrice = validateResult.errors.find(e => e.param === "price");
-  let rstDesc = validateResult.errors.find(e => e.param === "description");
+  let rstTitle = validateResult.errors.find((e) => e.param === "title");
+  let rstUrl = validateResult.errors.find((e) => e.param === "imageUrl");
+  let rstPrice = validateResult.errors.find((e) => e.param === "price");
+  let rstDesc = validateResult.errors.find((e) => e.param === "description");
 
   if (!validateResult.isEmpty()) {
     // req.flash("error", validateResult.errors[0].msg);
@@ -173,14 +173,14 @@ exports.postEditProduct = (req, res, next) => {
         imageUrl: imageUrl,
         price: price,
         description: description,
-        productId: productId
+        productId: productId,
       },
       validationError: {
         title: !!rstTitle,
         imageUrl: !!rstUrl,
         price: !!rstPrice,
-        description: !!rstDesc
-      }
+        description: !!rstDesc,
+      },
     });
   }
 
@@ -188,18 +188,18 @@ exports.postEditProduct = (req, res, next) => {
   // using built-in middleware API (findById) mongoose for fetch-single product
   // update procedural product then usgin save API
   Product.findById(productId)
-    .then(product => {
+    .then((product) => {
       product.title = title;
       product.imageUrl = imageUrl;
       product.price = price;
       product.description = description;
       return product.save();
     })
-    .then(result => {
+    .then((result) => {
       console.log("UPDATED PRODUCT!");
       res.redirect("/admin/products");
     })
-    .catch(err => {
+    .catch((err) => {
       err.name = err.name;
       err.errmsg = err.message;
       err.currentStack = err.stack;
@@ -212,7 +212,7 @@ exports.postDeleteProduct = (req, res, next) => {
   // #mongoose
   // using built-in middleware API (findByIdAndDelete) mongoose for delete product
   Product.deleteOne({ _id: productId, userId: req.user._id })
-    .then(fulfilled => {
+    .then((fulfilled) => {
       // console.log("fulfilled", fulfilled.deletedCount);
       if (!fulfilled.deletedCount) {
         req.flash("error", "access denied to Delete product!");
@@ -221,7 +221,7 @@ exports.postDeleteProduct = (req, res, next) => {
       console.log("REMOVED PRODUCT");
       res.redirect("/admin/products");
     })
-    .catch(err => {
+    .catch((err) => {
       err.name = err.name;
       err.errmsg = err.message;
       err.currentStack = err.stack;
@@ -238,15 +238,15 @@ exports.getProducts = (req, res, next) => {
   Product.find() // for authorize hidden products  { userId: req.user._id }
     // .select("title price")
     .populate("userId", "email -_id")
-    .then(product => {
+    .then((product) => {
       res.render("admin/products", {
         data: product,
         title: "Products List Page In Admin",
         path: "admin/products",
-        errorMessage: message
+        errorMessage: message,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       err.name = err.name;
       err.errmsg = err.message;
       err.currentStack = err.stack;
