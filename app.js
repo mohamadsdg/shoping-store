@@ -56,6 +56,7 @@ app.use(
 
 // this middleware for serve static file (css|js|img ...)
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(
   session({

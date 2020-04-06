@@ -23,8 +23,9 @@ exports.getAddProduct = (req, res, next) => {
 };
 exports.postAddProduct = (req, res, next) => {
   const { title, price, description } = req.body;
-  const imageUrl = req.file;
-  console.log("postAddProduct", req.body, imageUrl);
+  const image = req.file;
+
+  // console.log("postAddProduct", req.body, image);
 
   const validateResult = validationResult(req);
 
@@ -35,6 +36,28 @@ exports.postAddProduct = (req, res, next) => {
   let rstUrl = validateResult.errors.find((e) => e.param === "imageUrl");
   let rstPrice = validateResult.errors.find((e) => e.param === "price");
   let rstDesc = validateResult.errors.find((e) => e.param === "description");
+
+  if (!image) {
+    // req.flash("error", validateResult.errors[0].msg);
+    return res.status(422).render("admin/add-product", {
+      path: "admin/add-product",
+      title: "Add Product",
+      errorMessage: [{ param: "image", msg: "Attached file is not an image." }],
+      editMode: false,
+      oldInput: {
+        title: title,
+        price: price,
+        description: description,
+      },
+      validationError: {
+        title: !!rstTitle,
+        imageUrl: !!rstUrl,
+        price: !!rstPrice,
+        description: !!rstDesc,
+      },
+    });
+  }
+  const imageUrl = ("/" + image.path.replace(/\\/g, "/")).trim();
 
   if (!validateResult.isEmpty()) {
     // req.flash("error", validateResult.errors[0].msg);
@@ -57,6 +80,7 @@ exports.postAddProduct = (req, res, next) => {
       },
     });
   }
+
   const product = new Product({
     title,
     imageUrl,

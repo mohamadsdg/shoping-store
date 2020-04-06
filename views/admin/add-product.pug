@@ -17,7 +17,7 @@ block content
                 input(type="text", name="title" class={invalid:validationError.title} value=oldInput.title)#title
             .form-control
                 label(for="imageUrl") Image 
-                input(type="file", name="imageUrl")#imageUrl
+                input(type="file", name="imageUrl" class={invalid:validationError.imageUrl})#imageUrl
             .form-control
                 label(for="price") price
                 input(type="text", name="price",step="0.01" class={invalid:validationError.price} value=oldInput.price)#price
