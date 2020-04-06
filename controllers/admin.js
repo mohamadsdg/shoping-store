@@ -22,9 +22,12 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
+  const { title, price, description } = req.body;
+  const imageUrl = req.file;
+  console.log("postAddProduct", req.body, imageUrl);
+
   const validateResult = validationResult(req);
-  console.log(req.body, req.file);
+
   /**
    * for css class
    */

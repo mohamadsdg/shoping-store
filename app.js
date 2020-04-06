@@ -6,6 +6,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 var flash = require("connect-flash");
 const morgan = require("morgan");
+const multer = require("multer");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -14,7 +15,6 @@ const authRoute = require("./routes/auth");
 // const mongoConnect = require("./util/database").mongoConnect;
 const mongoose = require("mongoose");
 const User = require("./models/user");
-const multer = require("multer");
 
 const MONGODB_URI =
   "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop?retryWrites=true&w=majority";
@@ -30,7 +30,29 @@ var csrfProtection = csrf();
  */
 app.use(express.urlencoded({ extended: true }));
 // using multer for binary data
-app.use(multer().single("imageUrl"));
+const handleStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const customName = (new Date().getTime() + "-" + file.originalname).trim();
+    cb(null, customName);
+  },
+});
+const handleFileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/png" || file.mimetype === "image/jpg") {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid MimeType"));
+  }
+  // console.log(file);
+};
+
+app.use(
+  multer({ storage: handleStorage, fileFilter: handleFileFilter }).single(
+    "imageUrl"
+  )
+);
 
 // this middleware for serve static file (css|js|img ...)
 app.use(express.static(path.join(__dirname, "public")));
