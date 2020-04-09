@@ -218,12 +218,33 @@ exports.getInvoice = (req, res, next) => {
        * generate PDF
        */
       const doc = new PDFkit();
+      let totalPrice = 0;
       res.setHeader("content-type", "application/pdf");
       res.setHeader("Content-Disposition", "inline; filename=" + invoicesName);
 
       doc.pipe(fs.createWriteStream(pathFile));
       doc.pipe(res);
-      doc.text("Hello word !!");
+      doc.fontSize(25).fillColor("red").text("invoices", 100, 100, {
+        underline: true,
+        align: "center",
+      });
+      doc.fillColor("#555").text("----------------------", { align: "center" });
+      order.products.forEach((p) => {
+        totalPrice += +p.quantity * +p.product.price;
+        doc
+          .fontSize(18)
+          .fillColor("#333")
+          .text(`${p.product.title} - ${p.quantity} x ${p.product.price} $`, {
+            align: "center",
+          });
+      });
+      doc.fillColor("#555").text("----------------------", { align: "center" });
+      doc
+        .fontSize(18)
+        .fillColor("#333")
+        .text(`total price :  ${totalPrice} $`, {
+          align: "center",
+        });
       doc.end();
     })
     .catch((err) => {
