@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const PDFkit = require("pdfkit");
 const Product = require("../models/products");
 const Order = require("../models/order");
 
@@ -194,8 +195,7 @@ exports.getInvoice = (req, res, next) => {
        * stream reading
        */
       // var data = "";
-      const file = fs.createReadStream(pathFile);
-
+      // const file = fs.createReadStream(pathFile);
       // file.on("data", (chunk) => {
       //   console.log(chunk, `Received ${chunk.length} bytes of data.`);
       //   data += chunk;
@@ -209,13 +209,22 @@ exports.getInvoice = (req, res, next) => {
       // file.on("end", () => {
       //   // console.log("file.on end => ", data);
       // });
+      // res.setHeader("content-type", "application/pdf");
+      // res.setHeader("Content-Disposition", "inline; filename=" + invoicesName);
+      // console.log("Synchronous read: " + JSON.stringify(file, null, 2));
+      // file.pipe(res);
 
+      /**
+       * generate PDF
+       */
+      const doc = new PDFkit();
       res.setHeader("content-type", "application/pdf");
       res.setHeader("Content-Disposition", "inline; filename=" + invoicesName);
 
-      // console.log("Synchronous read: " + JSON.stringify(file, null, 2));
-
-      file.pipe(res);
+      doc.pipe(fs.createWriteStream(pathFile));
+      doc.pipe(res);
+      doc.text("Hello word !!");
+      doc.end();
     })
     .catch((err) => {
       err.name = err.name;
