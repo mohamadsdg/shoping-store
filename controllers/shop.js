@@ -174,17 +174,48 @@ exports.getInvoice = (req, res, next) => {
       if (order.user.userId.toString() !== req.user._id.toString()) {
         return next(new Error("unauthorize"));
       }
-      fs.readFile(pathFile, (err, data) => {
-        if (err) {
-          return next(err);
-        }
-        res.setHeader("content-type", "application/pdf");
-        res.setHeader(
-          "Content-Disposition",
-          "attachment; filename=" + invoicesName
-        );
-        res.send(data);
-      });
+
+      /**
+       * defualt reading
+       */
+      // fs.readFile(pathFile, (err, data) => {
+      //   if (err) {
+      //     return next(err);
+      //   }
+      //   res.setHeader("content-type", "application/pdf");
+      //   res.setHeader(
+      //     "Content-Disposition",
+      //     "attachment; filename=" + invoicesName
+      //   );
+      //   res.send(data);
+      // });
+
+      /**
+       * stream reading
+       */
+      // var data = "";
+      const file = fs.createReadStream(pathFile);
+
+      // file.on("data", (chunk) => {
+      //   console.log(chunk, `Received ${chunk.length} bytes of data.`);
+      //   data += chunk;
+      // });
+
+      // file.on("error", (err) => {
+      //   // next();
+      //   // console.log("err", err);
+      //   throw new Error(err);
+      // });
+      // file.on("end", () => {
+      //   // console.log("file.on end => ", data);
+      // });
+
+      res.setHeader("content-type", "application/pdf");
+      res.setHeader("Content-Disposition", "inline; filename=" + invoicesName);
+
+      // console.log("Synchronous read: " + JSON.stringify(file, null, 2));
+
+      file.pipe(res);
     })
     .catch((err) => {
       err.name = err.name;
