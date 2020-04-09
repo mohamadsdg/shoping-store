@@ -161,7 +161,6 @@ exports.getCheckout = (req, res, next) => {
     path: "/checkout",
   });
 };
-
 exports.getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
   const invoicesName = "invoice-" + orderId + ".pdf";

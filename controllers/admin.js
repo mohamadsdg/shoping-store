@@ -1,5 +1,6 @@
 const Product = require("../models/products");
 const mongoos = require("mongoose");
+const fileHelper = require("../util/files");
 const { validationResult } = require("express-validator/check");
 
 exports.getAddProduct = (req, res, next) => {
@@ -236,9 +237,17 @@ exports.postEditProduct = (req, res, next) => {
 };
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
-  // #mongoose
-  // using built-in middleware API (findByIdAndDelete) mongoose for delete product
-  Product.deleteOne({ _id: productId, userId: req.user._id })
+
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("product not Found !"));
+      }
+      const convertPath = product.imageUrl.replace(/\//g, "/").trim();
+      // console.log("convertPath", convertPath.slice(1, convertPath.length));
+      fileHelper.deleteFile(convertPath.slice(1, convertPath.length));
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
     .then((fulfilled) => {
       // console.log("fulfilled", fulfilled.deletedCount);
       if (!fulfilled.deletedCount) {
