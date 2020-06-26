@@ -1,0 +1,16 @@
+mixin paginate(paginate)       
+    section.pagination                
+        if (paginate.currentPage != 1 && paginate.prevPage !=1)
+            a(href="?page=1") 1
+
+        if paginate.hasPrevPage
+            a(href="?page="+paginate.prevPage ) #{paginate.prevPage}
+
+        a(href="?page="+paginate.currentPage class='active') #{paginate.currentPage}
+
+        if paginate.hasNextPage
+            a(href="?page="+paginate.nextPage ) #{paginate.nextPage}
+
+        if (paginate.lastPage != paginate.currentPage && paginate.nextPage != paginate.lastPage)
+            a(href="?page="+paginate.lastPage ) #{paginate.lastPage}
+

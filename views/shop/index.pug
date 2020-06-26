@@ -1,4 +1,5 @@
 extends ../layouts/main-layout.pug 
+include ../layouts/mixins/paginate.pug
 
 block style
     link(rel="stylesheet", href="/css/product.css")
@@ -23,6 +24,7 @@ block content
                                 form(action='/cart' method='POST')
                                     input(type="hidden" name="_csrf" value=csrfToken )                 
                                     button(type="submit").btn Add to Cart
-                                    input(type="hidden" name='productId' value=product._id)
+                                    input(type="hidden" name='productId' value=product._id)   
+            +paginate(paginate)
         else
             p Empty Product...

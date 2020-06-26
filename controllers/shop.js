@@ -3,16 +3,33 @@ const path = require("path");
 const PDFkit = require("pdfkit");
 const Product = require("../models/products");
 const Order = require("../models/order");
+const ITEM_PER_PAGES = 1;
 
 exports.getIndex = (req, res, next) => {
   // #mongoose
   // using built-in middleware API (find) mongoose for fetch-all document
-  Product.find()
+  const page = +req.query.page || 1;
+  let totalProduct;
+  Product.countDocuments()
+    .then((numberOfProduct) => {
+      totalProduct = numberOfProduct;
+      return Product.find()
+        .skip((page - 1) * ITEM_PER_PAGES)
+        .limit(ITEM_PER_PAGES);
+    })
     .then((product) => {
       res.render("shop/index", {
         data: product,
         title: "SHOP",
         path: "/",
+        paginate: {
+          currentPage: page,
+          nextPage: page + 1,
+          prevPage: page - 1,
+          hasNextPage: ITEM_PER_PAGES * page < totalProduct,
+          hasPrevPage: page > 1,
+          lastPage: Math.ceil(totalProduct / ITEM_PER_PAGES),
+        },
       });
     })
     .catch((err) => {
@@ -65,12 +82,28 @@ exports.postOrders = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // # mongoose
   // using built-in middleware API (find) mongoose for fetch-all document
-  Product.find()
+  const page = +req.query.page || 1;
+  let totalProduct;
+  Product.countDocuments()
+    .then((numberOfProduct) => {
+      totalProduct = numberOfProduct;
+      return Product.find()
+        .skip((page - 1) * ITEM_PER_PAGES)
+        .limit(ITEM_PER_PAGES);
+    })
     .then((product) => {
       res.render("shop/index", {
         data: product,
         title: "Products List Page",
         path: "/products",
+        paginate: {
+          currentPage: page,
+          nextPage: page + 1,
+          prevPage: page - 1,
+          hasNextPage: ITEM_PER_PAGES * page < totalProduct,
+          hasPrevPage: page > 1,
+          lastPage: Math.ceil(totalProduct / ITEM_PER_PAGES),
+        },
       });
     })
     .catch((err) => {
