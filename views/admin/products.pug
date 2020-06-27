@@ -21,10 +21,11 @@ block content
                             p.product__descriptionA #{product.description}
                             p.product__descriptionA added By Admin : #{product.userId.email}
                         .card__actions
-                            a(href='/admin/edit-product/'+ product._id +'?edit=true').btn Edit    
-                            form(action="/admin/delete-product", method='POST')     
-                                input(type="hidden" name="_csrf" value=csrfToken )                 
-                                input(type="hidden" name="productId" value=product._id)                   
-                                button(type="submit").btn Delete
+                            a(href='/admin/edit-product/'+ product._id +'?edit=true').btn Edit                               
+                            input(type="hidden" name="_csrf" value=csrfToken )                 
+                            input(type="hidden" name="productId" value=product._id)                   
+                            button(type="button" onClick='deleteProduct(this)').btn Delete
         else
             p Empty Product...
+block script
+    script(src="/js/admin.js" type='text/javascript')

@@ -37,6 +37,9 @@ router.post(
 // admin/delete-product ==> POST
 router.post("/delete-product", isAuth, adminController.postDeleteProduct);
 
+// admin/delete-product ==> API
+router.delete("/product/:productId", isAuth, adminController.deleteProduct);
+
 // admin/products ==> Get
 router.get("/products", isAuth, adminController.getProducts);
 

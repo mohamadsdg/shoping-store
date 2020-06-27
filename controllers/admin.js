@@ -265,6 +265,27 @@ exports.postDeleteProduct = (req, res, next) => {
       return next(err);
     });
 };
+exports.deleteProduct = (req, res, next) => {
+  const productId = req.params.productId;
+
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("product not Found !"));
+      }
+      const convertPath = product.imageUrl.replace(/\//g, "/").trim();
+      // console.log("convertPath", convertPath.slice(1, convertPath.length));
+      fileHelper.deleteFile(convertPath.slice(1, convertPath.length));
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
+    .then(() => {
+      console.log("DESTROY PRODUCT");
+      res.status(200).json({ message: "success" });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Deleting Product failed" });
+    });
+};
 exports.getProducts = (req, res, next) => {
   let message = req.flash("error");
   message.length > 0 ? (message = message[0]) : (message = null);
