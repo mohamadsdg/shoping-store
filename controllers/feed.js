@@ -22,9 +22,12 @@ exports.createPost = (req, res, next) => {
   res.status(201).json({
     message: "Product create successfully",
     post: {
-      id: new Date().toISOString(),
-      title,
-      content,
+      _id: new Date().toISOString(),
+      title: title,
+      content: content,
+      creator: { name: "MohamadReza" },
+      createdAt: new Date(),
+      imageUrl: "images/tst.png",
     },
   });
 };
