@@ -14,17 +14,22 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.createPost = (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
 
   const title = req.body.title;
   const content = req.body.content;
 
   res.status(201).json({
     message: "Product create successfully",
-    post: {
-      id: new Date().toISOString(),
-      title,
-      content,
-    },
+    post: [
+      {
+        _id: "2",
+        title,
+        content,
+        creator: { name: "MohamadReza" },
+        createdAt: new Date(),
+        imageUrl: "images/tst.png",
+      },
+    ],
   });
 };
