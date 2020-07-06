@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-var bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const feedRoute = require("./routes/feed");
 
@@ -19,4 +20,11 @@ app.use((req, res, next) => {
 app.use("/feed", feedRoute);
 
 // server
-app.listen(8080);
+mongoose
+  .connect(
+    "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop-rest?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true"
+  )
+  .then(() => {
+    app.listen(8080);
+  })
+  .catch((err) => console.log(err));
