@@ -22,6 +22,7 @@ exports.getPost = (req, res, next) => {
 exports.createPost = (req, res, next) => {
   // console.log(req.body);
   const errors = validationResult(req);
+  console.log(req.file);
   if (!errors.isEmpty()) {
     const error = new Error("validation failed");
     error.statusCode = 422;
@@ -31,6 +32,12 @@ exports.createPost = (req, res, next) => {
     //   .status(422)
     //   .json({ message: "validation failed", error: errors.array() });
   }
+  if (!req.file) {
+    const error = new Error("No Image Provided");
+    error.statusCode = 422;
+    throw error;
+  }
+  const image = req.file.path;
   const title = req.body.title;
   const content = req.body.content;
 
@@ -38,7 +45,7 @@ exports.createPost = (req, res, next) => {
     title: title,
     content: content,
     creator: { name: "MohamadReza" },
-    imageUrl: "images/tst.png",
+    imageUrl: image,
   });
   post
     .save()

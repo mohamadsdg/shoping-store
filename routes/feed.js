@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
 const feedController = require("../controllers/feed");
+// const { Upload } = require("../middleware/handleImage");
 
 // GET /feed/posts
 router.get("/posts", feedController.getPost);
