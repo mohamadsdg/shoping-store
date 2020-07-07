@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -16,8 +17,18 @@ app.use((req, res, next) => {
   res.setHeader("Access-control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 // route
 app.use("/feed", feedRoute);
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  const data = error.payload || {};
+  res.status(status).json({ message: message, data: data });
+});
 
 // server
 mongoose
@@ -27,4 +38,6 @@ mongoose
   .then(() => {
     app.listen(8080);
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    throw new Error("Error on initial connection ....");
+  });

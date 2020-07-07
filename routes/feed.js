@@ -10,8 +10,8 @@ router.get("/posts", feedController.getPost);
 router.post(
   "/posts",
   [
-    body("title", "معتبر نمیباشد").trim().isLength({ min: 7, max: 10 }),
-    body("content").trim().isLength({ min: 2, max: 5 }),
+    body("title", "معتبر نمیباشد").trim().isLength({ min: 5 }),
+    body("content").trim().isLength({ min: 5 }),
   ],
   feedController.createPost
 );
