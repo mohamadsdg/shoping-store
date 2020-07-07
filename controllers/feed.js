@@ -68,7 +68,7 @@ exports.getSinglePost = (req, res, next) => {
       }
       res.status(200).json({
         message: "successful",
-        data: post,
+        post: post,
       });
     })
     .catch((err) => {
