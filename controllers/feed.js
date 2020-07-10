@@ -63,6 +63,26 @@ exports.createPost = (req, res, next) => {
     });
 };
 
+exports.updatePost = (req, res, next) => {
+  const post_id = req.params.postId;
+  const title = req.body.title;
+  const content = req.body.content;
+  let image = req.body.image;
+
+  const errors = validationResult(req);
+  // validate input
+  if (!errors.isEmpty()) {
+    const error = new Error("validation failed");
+    error.statusCode = 422;
+    error.payload = errors.array();
+    throw error;
+  }
+  // validate file(image)
+  if (req.file) {
+    image = req.file.path.replace(/\\/g, "/");
+  }
+};
+
 exports.getSinglePost = (req, res, next) => {
   const post_id = req.params.postId;
 

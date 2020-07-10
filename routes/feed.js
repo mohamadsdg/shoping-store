@@ -18,6 +18,18 @@ router.post(
   feedController.createPost
 );
 
+// GET /feed/post/:postId
 router.get("/post/:postId", feedController.getSinglePost);
+
+// POST /feed/posts
+router.put(
+  "/post/:postId",
+  Upload.single("image"),
+  [
+    body("title", "معتبر نمیباشد").trim().isLength({ min: 5 }),
+    body("content").trim().isLength({ min: 5 }),
+  ],
+  feedController.updatePost
+);
 
 module.exports = router;
