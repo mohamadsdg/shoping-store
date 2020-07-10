@@ -22,7 +22,7 @@ exports.getPost = (req, res, next) => {
 exports.createPost = (req, res, next) => {
   // console.log(req.body);
   const errors = validationResult(req);
-  console.log(req.file);
+
   if (!errors.isEmpty()) {
     const error = new Error("validation failed");
     error.statusCode = 422;
@@ -37,7 +37,7 @@ exports.createPost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  const image = req.file.path;
+  const image = req.file.path.replace(/\\/g, "/");
   const title = req.body.title;
   const content = req.body.content;
 

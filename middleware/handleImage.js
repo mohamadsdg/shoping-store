@@ -5,14 +5,18 @@ const fileStorage = multer.diskStorage({
     cb(null, "images/");
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
+    // ':' is not allowed in Windows.
+    cb(
+      null,
+      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+    );
   },
 });
 const fileFilter = (req, file, cb) => {
   if (
-    file.mimetype == "images/png" ||
-    file.mimetype == "images/jpg" ||
-    file.mimetype == "images/jpeg"
+    file.mimetype == "image/png" ||
+    file.mimetype == "image/jpg" ||
+    file.mimetype == "image/jpeg"
   ) {
     cb(null, true);
   } else {
