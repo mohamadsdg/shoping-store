@@ -6,11 +6,19 @@ const Post = require("../models/post");
 const post = require("../models/post");
 
 exports.getPost = (req, res, next) => {
-  post
-    .find()
+  const currentPage = req.query.page || 1;
+  let totalPost;
+  Post.countDocuments()
+    .then((count) => {
+      totalPost = count;
+      return Post.find()
+        .skip((currentPage - 1) * totalPost)
+        .limit(currentPage);
+    })
     .then((posts) => {
       res.status(200).json({
         posts: posts,
+        totalItems: totalPost,
       });
     })
     .catch((err) => {
