@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const feedRoute = require("./routes/feed");
+const authRoute = require("./routes/auth");
 
 // someMidlleware
 app.use(morgan("dev"));
@@ -21,6 +22,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 // route
 app.use("/feed", feedRoute);
+app.use("/auth", authRoute);
 
 app.use((error, req, res, next) => {
   console.log(error);
