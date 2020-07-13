@@ -4,12 +4,15 @@ const { body } = require("express-validator");
 const feedController = require("../controllers/feed");
 const { Upload } = require("../middleware/handleImage");
 
+const isAuth = require("../middleware/is-auth");
+
 // GET /feed/posts
-router.get("/posts", feedController.getPost);
+router.get("/posts", isAuth, feedController.getPost);
 
 // POST /feed/posts
 router.post(
   "/posts",
+  isAuth,
   Upload.single("image"),
   [
     body("title", "معتبر نمیباشد").trim().isLength({ min: 5 }),
@@ -19,11 +22,12 @@ router.post(
 );
 
 // GET /feed/post/:postId
-router.get("/post/:postId", feedController.getSinglePost);
+router.get("/post/:postId", isAuth, feedController.getSinglePost);
 
 // POST /feed/posts
 router.put(
   "/post/:postId",
+  isAuth,
   Upload.single("image"),
   [
     body("title", "معتبر نمیباشد").trim().isLength({ min: 5 }),
@@ -33,6 +37,6 @@ router.put(
 );
 
 // DELETE /feed/post/:postId
-router.delete("/post/:postId", feedController.deletePost);
+router.delete("/post/:postId", isAuth, feedController.deletePost);
 
 module.exports = router;

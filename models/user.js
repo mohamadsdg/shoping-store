@@ -18,10 +18,12 @@ const UserSchema = new Schema({
     type: String,
     default: "Im new user ",
   },
-  post: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
-  },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
 module.exports = monoose.model("User", UserSchema);

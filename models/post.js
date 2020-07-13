@@ -1,7 +1,7 @@
 const mongoos = require("mongoose");
 const Schema = mongoos.Schema;
 
-const postSchema = new Schema(
+const PostSchema = new Schema(
   {
     title: {
       required: true,
@@ -16,11 +16,11 @@ const postSchema = new Schema(
       type: String,
     },
     creator: {
-      required: true,
-      type: Object,
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoos.model("Post", postSchema);
+module.exports = mongoos.model("Post", PostSchema);
