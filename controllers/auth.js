@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-exports.signUp = (req, res, next) => {
+exports.signUp = async (req, res, next) => {
   const error = validationResult(req);
   if (!error.isEmpty()) {
     const err = new Error("validation Error");
@@ -15,31 +15,26 @@ exports.signUp = (req, res, next) => {
   const name = req.body.name;
   const password = req.body.password;
 
-  bcrypt
-    .hash(password, 12)
-    .then((hashPass) => {
-      const user = new User({
-        email: email,
-        name: name,
-        password: hashPass,
-      });
-
-      return user.save();
-    })
-    .then((result) => {
-      res
-        .status(201)
-        .json({ message: "User Create !", data: { userId: result._id } });
-    })
-    .catch((error) => {
-      if (!error.statusCode) {
-        error.statusCode = 500;
-      }
-      next(error);
+  try {
+    const hashPass = await bcrypt.hash(password, 12);
+    const user = new User({
+      email: email,
+      name: name,
+      password: hashPass,
     });
+    const result = await user.save();
+    res
+      .status(201)
+      .json({ message: "User Create !", data: { userId: result._id } });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
 
-exports.login = (req, res, next) => {
+exports.login = async (req, res, next) => {
   const error = validationResult(req);
   if (!error.isEmpty()) {
     const err = new Error("validation Error");
@@ -50,41 +45,42 @@ exports.login = (req, res, next) => {
 
   const email = req.body.email;
   const password = req.body.password;
-  let loadeduser;
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        const err = new Error("A User With this Email could not be found !");
-        err.statusCode = 401;
-        throw err;
-      }
-      loadeduser = user;
-      return bcrypt.compare(password, user.password);
-    })
-    .then((isEqual) => {
-      if (!isEqual) {
-        const err = new Error("wrong password");
-        err.statusCode = 401;
-        throw err;
-      }
-      const token = jwt.sign(
-        { email: loadeduser.email, userId: loadeduser._id.toString() },
-        "somesupersecretsecret",
-        {
-          expiresIn: "1h",
-        }
-      );
+  try {
+    // check userExsit
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      const err = new Error("A User With this Email could not be found !");
+      err.statusCode = 401;
+      throw err;
+    }
 
-      res.status(200).json({
-        token: token,
-        userId: loadeduser._id.toString(),
-      });
-    })
-    .catch((error) => {
-      if (!error.statusCode) {
-        error.statusCode = 500;
+    // check password
+    const isEqual = await bcrypt.compare(password, user.password);
+    if (!isEqual) {
+      const err = new Error("wrong password");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    // generate token
+    const token = jwt.sign(
+      { email: user.email, userId: user._id.toString() },
+      "somesupersecretsecret",
+      {
+        expiresIn: "1h",
       }
-      next(error);
+    );
+
+    // send response
+    res.status(200).json({
+      token: token,
+      userId: user._id.toString(),
     });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
