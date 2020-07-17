@@ -3,6 +3,8 @@ const router = express.Router();
 const { body } = require("express-validator");
 const UserController = require("../controllers/auth");
 const User = require("../models/user");
+const isAuth = require("../middleware/is-auth");
+const cors = require("cors");
 
 router.put(
   "/signup",
@@ -36,6 +38,15 @@ router.post(
     body("password").trim().isLength({ min: 5 }),
   ],
   UserController.login
+);
+
+router.options("/status", cors()); // enable pre-flight request
+router.get("/status", isAuth, UserController.getUserStatus);
+router.patch(
+  "/status",
+  isAuth,
+  [body("status").trim().not().isEmpty()],
+  UserController.updateUserStatus
 );
 
 module.exports = router;

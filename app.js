@@ -14,7 +14,7 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Method", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Method", "GET, POST, PUT, DELETE, PATCH");
   res.setHeader("Access-control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
@@ -25,7 +25,6 @@ app.use("/feed", feedRoute);
 app.use("/auth", authRoute);
 
 app.use((error, req, res, next) => {
-  console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
   const data = error.payload || {};
@@ -38,7 +37,9 @@ mongoose
     "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop-rest?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true"
   )
   .then(() => {
-    app.listen(8080);
+    const server = app.listen(8080);
+    // const io = require("socket.io")(server);
+    // io.on("connection");
   })
   .catch((err) => {
     throw new Error("Error on initial connection ....");
