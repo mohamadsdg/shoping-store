@@ -38,8 +38,10 @@ mongoose
   )
   .then(() => {
     const server = app.listen(8080);
-    // const io = require("socket.io")(server);
-    // io.on("connection");
+    const io = require("./socket").init(server);
+    io.on("connection", (socket) => {
+      console.log("client coneccted");
+    });
   })
   .catch((err) => {
     throw new Error("Error on initial connection ....");
