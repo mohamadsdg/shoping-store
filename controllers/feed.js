@@ -13,6 +13,7 @@ exports.getPost = async (req, res, next) => {
     const totalItems = await Post.countDocuments();
     const posts = await Post.find()
       .populate("creator", "name")
+      .sort({ createdAt: -1 })
       .skip((currentPage - 1) * perPage)
       .limit(perPage);
 
@@ -64,8 +65,11 @@ exports.createPost = async (req, res, next) => {
     user.posts.push(post);
     await user.save();
 
-    io.getInstance().emit("post", { action: "create", post: post });
-    
+    io.getInstance().emit("post", {
+      action: "create",
+      post: { ...post._doc, creator: { _id: user._id, name: user.name } },
+    });
+
     res.status(201).json({
       message: "Product create successfully",
       post: post,
@@ -104,14 +108,14 @@ exports.updatePost = async (req, res, next) => {
   }
 
   try {
-    const post = await Post.findById(post_id);
+    const post = await Post.findById(post_id).populate("creator", "name");
     if (!post) {
       const error = new Error("not found");
       error.statusCode = 404;
       throw error;
     }
     // Authorization User
-    if (req.userId != post.creator.toString()) {
+    if (req.userId != post.creator._id.toString()) {
       const error = new Error("Not Authurize !");
       error.statusCode = 403;
       throw error;
@@ -123,6 +127,7 @@ exports.updatePost = async (req, res, next) => {
     post.content = content;
     post.imageUrl = image;
     const result = await post.save();
+    io.getInstance().emit("post", { action: "update", post: result });
     res.status(200).json({ message: "Post Update", post: result });
   } catch (error) {
     if (!error.statusCode) {
@@ -173,6 +178,11 @@ exports.deletePost = async (req, res, next) => {
     const user = await User.findById(req.userId);
     user.posts.pull(postId);
     await user.save();
+
+    io.getInstance().emit("post", {
+      action: "delete",
+      post: postId,
+    });
 
     res.status(200).json({
       message: "Delete Successfull",

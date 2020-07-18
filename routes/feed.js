@@ -3,6 +3,7 @@ const router = express.Router();
 const { body } = require("express-validator");
 const feedController = require("../controllers/feed");
 const { Upload } = require("../middleware/handleImage");
+const cors = require("cors");
 
 const isAuth = require("../middleware/is-auth");
 
@@ -37,6 +38,7 @@ router.put(
 );
 
 // DELETE /feed/post/:postId
+router.options("/post/:postId", cors()); // enable pre-flight request
 router.delete("/post/:postId", isAuth, feedController.deletePost);
 
 module.exports = router;
