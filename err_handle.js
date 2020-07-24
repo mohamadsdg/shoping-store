@@ -8,7 +8,7 @@ function sum(a, b) {
 
 try {
   const add = sum(2, "2");
-  console.log(add);
+  // console.log(add);
 } catch (error) {
   console.log("Erro occurred !");
   //   console.log(error);

@@ -16,8 +16,7 @@ const authRoute = require("./routes/auth");
 const mongoose = require("mongoose");
 const User = require("./models/user");
 
-const MONGODB_URI =
-  "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop?retryWrites=true&w=majority";
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0-2v2dn.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`;
 
 const store = new MongoDBStore({
   uri: MONGODB_URI,
