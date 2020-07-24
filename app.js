@@ -45,8 +45,8 @@ const accessLog = fs.createWriteStream(path.join(__dirname, "access.log"), {
 app.use(morgan("combined", { stream: accessLog }));
 
 // gatch private and public key for openSSL
-const privateKey = fs.readFileSync("server.key");
-const certificate = fs.readFileSync("server.cert");
+// const privateKey = fs.readFileSync("server.key");
+// const certificate = fs.readFileSync("server.cert");
 
 /**
  * this middleware for pars body req just text data
