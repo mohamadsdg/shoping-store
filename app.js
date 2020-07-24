@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const fs = require("fs");
+const https = require("https");
 
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -42,6 +43,10 @@ const accessLog = fs.createWriteStream(path.join(__dirname, "access.log"), {
   flags: "a",
 });
 app.use(morgan("combined", { stream: accessLog }));
+
+// gatch private and public key for openSSL
+const privateKey = fs.readFileSync("server.key");
+const certificate = fs.readFileSync("server.cert");
 
 /**
  * this middleware for pars body req just text data
@@ -169,7 +174,10 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    app.listen(9000);
+    // app.listen(9000);
+    https
+      .createServer({ key: privateKey, cert: certificate }, app)
+      .listen(9000);
   })
   .catch((err) => {
     throw new Error("Error on initial connection ....");
