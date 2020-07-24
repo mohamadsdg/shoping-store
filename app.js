@@ -8,6 +8,7 @@ var flash = require("connect-flash");
 const morgan = require("morgan");
 const multer = require("multer");
 const helmet = require("helmet");
+const compression = require("compression");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -29,6 +30,11 @@ var csrfProtection = csrf();
  * adding secure response header with Helmet
  */
 app.use(helmet());
+
+/**
+ * adding compress response bodies for all request that traverse through the middleware,
+ */
+app.use(compression());
 
 /**
  * this middleware for pars body req just text data
