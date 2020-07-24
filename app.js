@@ -7,6 +7,7 @@ const csrf = require("csurf");
 var flash = require("connect-flash");
 const morgan = require("morgan");
 const multer = require("multer");
+const helmet = require("helmet");
 
 const errorController = require("./controllers/error");
 const adminRouter = require("./routes/admin");
@@ -23,6 +24,11 @@ const store = new MongoDBStore({
   collection: "sessions",
 });
 var csrfProtection = csrf();
+
+/**
+ * adding secure response header with Helmet
+ */
+app.use(helmet());
 
 /**
  * this middleware for pars body req just text data
