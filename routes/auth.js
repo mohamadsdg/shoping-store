@@ -1,71 +1,52 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("../controllers/auth");
+const { body } = require("express-validator");
+const UserController = require("../controllers/auth");
 const User = require("../models/user");
-const { check, body } = require("express-validator");
+const isAuth = require("../middleware/is-auth");
+const cors = require("cors");
 
-router.get("/login", authController.getLogin);
-router.get("/signup", authController.getSignup);
-router.get("/reset", authController.getReset);
-router.get("/reset/:token", authController.getNewPassword);
+router.put(
+  "/signup",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("please Enter a valid Email")
+      .custom((value, { req }) => {
+        return User.findOne({ email: value })
+          .then((userDoc) => {
+            if (!userDoc) {
+              return Promise.reject("E-mail address already exists !");
+            }
+          })
+          .catch(() => {});
+      })
+      .normalizeEmail(),
+    body("password").trim().isLength({ min: 5 }),
+    body("name").trim().not().isEmpty(),
+  ],
+  UserController.signUp
+);
 
 router.post(
   "/login",
   [
-    check("email")
-      .trim()
-      .isEmail()
-      .withMessage("Please enter a valid email.")
-      .custom((value, { req }) => {
-        if (value === "mohamad.r.sadeghi93@gmail.com")
-          // throw new Error("forbidden email");
-          return true;
-
-        return true;
-      }),
-    body("password", "password is required")
-      .trim()
-      .custom((value, { req }) => {
-        if (!value) throw new Error();
-        return true;
-      })
-  ],
-  authController.postLogin
-);
-router.post("/logout", authController.postLogout);
-router.post(
-  "/signup",
-  [
     body("email")
-      .trim()
-      .normalizeEmail()
       .isEmail()
-      .withMessage("Please enter a valid email.")
-      .custom((value, { req }) => {
-        return User.findOne({ email: value }).then(user => {
-          if (user) {
-            return Promise.reject(
-              "E-mail already in use, please pick a difrent email"
-            );
-          }
-        });
-      }),
-    body("password", "password has letter and between 2-6 character")
-      .trim()
-      .isLength({ min: 2, max: 6 })
-      .isAlphanumeric(),
-    body("confirmPassword")
-      .trim()
-      .custom((value, { req }) => {
-        if (value !== req.body.password) {
-          throw new Error("password not Match");
-        }
-        return true;
-      })
+      .withMessage("please Enter a valid Email")
+      .normalizeEmail(),
+    body("password").trim().isLength({ min: 5 }),
   ],
-  authController.postSignup
+  UserController.login
 );
-router.post("/reset", authController.postReset);
-router.post("/new-password", authController.postNewPassword);
+
+router.options("/status", cors()); // enable pre-flight request
+router.get("/status", isAuth, UserController.getUserStatus);
+router.patch(
+  "/status",
+  isAuth,
+  [body("status").trim().not().isEmpty()],
+  UserController.updateUserStatus
+);
 
 module.exports = router;
