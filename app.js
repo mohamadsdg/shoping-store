@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const fs = require("fs");
+
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
@@ -35,6 +37,11 @@ app.use(helmet());
  * adding compress response bodies for all request that traverse through the middleware,
  */
 app.use(compression());
+
+const accessLog = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
+app.use(morgan("combined", { stream: accessLog }));
 
 /**
  * this middleware for pars body req just text data
@@ -107,8 +114,6 @@ app.use((req, res, next) => {
       next(err);
     });
 });
-
-app.use(morgan("dev"));
 
 // add Themplate Engine
 app.set("view engine", "pug");
