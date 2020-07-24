@@ -34,10 +34,10 @@ app.use((error, req, res, next) => {
 // server
 mongoose
   .connect(
-    "mongodb+srv://mohamad:OG2od0fkphz2FnNS@cluster0-2v2dn.mongodb.net/shop-rest?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true"
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0-2v2dn.mongodb.net/${process.env.MONGO_DATABASE}?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true`
   )
   .then(() => {
-    const server = app.listen(8080);
+    const server = app.listen(process.env.PORT || 8080);
     const io = require("./socket").init(server);
     io.on("connection", (socket) => {
       console.log("client coneccted");
