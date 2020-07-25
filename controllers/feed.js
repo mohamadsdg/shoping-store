@@ -48,7 +48,7 @@ exports.createPost = async (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  const image = req.file.path.replace(/\\/g, "/");
+  const image = req.file.path;
   const title = req.body.title;
   const content = req.body.content;
 
