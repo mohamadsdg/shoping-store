@@ -38,7 +38,7 @@
     "nodemailer": "^6.4.5",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "pdfkit": "^0.11.0",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "sequelize": "^4.44.4",
     "sequelize-cli": "^5.5.1",
     "socket.io": "^2.3.0"
