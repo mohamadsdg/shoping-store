@@ -38,7 +38,7 @@ exports.createPost = async (req, res, next) => {
     const error = new Error("validation failed");
     error.statusCode = 422;
     error.payload = errors.array();
-    throw error;
+    // throw error;
     // return res
     //   .status(422)
     //   .json({ message: "validation failed", error: errors.array() });
@@ -46,7 +46,7 @@ exports.createPost = async (req, res, next) => {
   if (!req.file) {
     const error = new Error("No Image Provided");
     error.statusCode = 422;
-    throw error;
+    // throw error;
   }
   const image = req.file.path.replace(/\\/g, "/");
   const title = req.body.title;

@@ -33,9 +33,10 @@ app.use((error, req, res, next) => {
 
 // server
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0-2v2dn.mongodb.net/${process.env.MONGO_DATABASE}?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true`
-  )
+  .connect(`mongodb://localhost:27017/${process.env.MONGO_DATABASE}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     const server = app.listen(process.env.PORT || 8080);
     const io = require("./socket").init(server);

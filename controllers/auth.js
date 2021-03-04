@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const io = require("../socket");
 const jwt = require("jsonwebtoken");
 
 exports.signUp = async (req, res, next) => {
@@ -9,7 +10,6 @@ exports.signUp = async (req, res, next) => {
     const err = new Error("validation Error");
     err.statusCode = 422;
     err.data = error.array();
-    throw err;
   }
   const email = req.body.email;
   const name = req.body.name;
@@ -36,11 +36,11 @@ exports.signUp = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const error = validationResult(req);
+
   if (!error.isEmpty()) {
     const err = new Error("validation Error");
     err.statusCode = 422;
     err.data = error.array();
-    throw err;
   }
 
   const email = req.body.email;
@@ -124,6 +124,10 @@ exports.updateUserStatus = async (req, res, next) => {
     }
     user.status = newStatus;
     await user.save();
+    io.getInstance().emit("user", {
+      action: "update:status",
+      status: newStatus,
+    });
     res.status(200).json({ message: "User updated." });
   } catch (error) {
     if (!error.statusCode) {

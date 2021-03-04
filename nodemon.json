@@ -1,7 +1,7 @@
 {
   "env": {
-    "MONGO_USER": "mohamad",
-    "MONGO_PASS": "OG2od0fkphz2FnNS",
-    "MONGO_DATABASE": "shop-rest"
+    "MONGO_USER": "",
+    "MONGO_PASS": "",
+    "MONGO_DATABASE": "shop"
   }
 }
